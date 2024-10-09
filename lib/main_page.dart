@@ -1,4 +1,6 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 import 'package:store_ms/drawer.dart';
 import 'package:flutter_speed_dial/flutter_speed_dial.dart';
 import 'inputting_form.dart';
@@ -11,11 +13,31 @@ class MainPage extends StatefulWidget {
 }
 
 class _MainPageState extends State<MainPage> {
+  TextEditingController reasonToSpendController = TextEditingController();
+  TextEditingController amountSpentController = TextEditingController();
   List items = ['مخمل', 'ساتن', 'کریپ'];
   late int numberOfSales;
   late double totalAmount;
+  DateTime spendDate = DateTime.now();
+  String? reasonToSpend;
+  double? amountSpent;
   final formKey = GlobalKey<FormState>();
-  DateTime now = DateTime.now();
+  DateTime maniPageDate = DateTime.now();
+
+  Future<void> _selectDate(BuildContext context) async {
+    final DateTime? pickedDate = await showDatePicker(
+      context: context,
+      initialDate: spendDate,
+      firstDate: DateTime(2000),
+      lastDate: DateTime(2100),
+    );
+    if (pickedDate != null && pickedDate != spendDate) {
+      setState(() {
+        spendDate = pickedDate;
+      });
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -50,7 +72,7 @@ class _MainPageState extends State<MainPage> {
                         children: [
                           Center(
                               child: Text(
-                            '${now.year}-${now.month}-${now.day}',
+                            '${maniPageDate.year}-${maniPageDate.month}-${maniPageDate.day}',
                             style: TextStyle(fontSize: 20),
                           )),
                           Divider(),
@@ -124,11 +146,11 @@ class _MainPageState extends State<MainPage> {
             child: Icon(Icons.attach_money),
             label: 'Sell',
             labelBackgroundColor: Colors.teal[300],
-            labelStyle: TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
+            labelStyle:
+                TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
             onTap: () {
-              Navigator.of(context).push(MaterialPageRoute(
-                  builder: (context) =>
-                  const MyFormPage()));
+              Navigator.of(context).push(
+                  MaterialPageRoute(builder: (context) => const MyFormPage()));
             },
           ),
           SpeedDialChild(
@@ -137,45 +159,101 @@ class _MainPageState extends State<MainPage> {
             child: Icon(Icons.shopping_cart),
             label: 'Buy',
             labelBackgroundColor: Colors.teal[300],
-            labelStyle: TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
+            labelStyle:
+                TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
             onTap: () {
               showModalBottomSheet(
                   context: context,
                   isScrollControlled: true,
                   builder: (context) {
-                    return DraggableScrollableSheet(
-                      initialChildSize: 0.5,
-                      minChildSize: 0.4,
-                      maxChildSize: 0.7,
-                      expand: false,
-                      builder: (BuildContext context,
-                          ScrollController
-                          scrollController) {
-                        return Padding(
-                          padding: EdgeInsets.all(16),
-                          child: SingleChildScrollView(
-                            controller: scrollController,
-                            child: Column(
-                              children: [
-                                Form(
-                                  key: formKey,
-                                  child: Column(
-                                    children: [
-                                      TextField(),
-                                    ],
-                                  ),
+                    return StatefulBuilder(
+                      builder: (BuildContext context, StateSetter setModalState ) {
+                        return DraggableScrollableSheet(
+                          initialChildSize: 0.5,
+                          minChildSize: 0.4,
+                          maxChildSize: 0.7,
+                          expand: false,
+                          builder: (BuildContext context,
+                              ScrollController scrollController) {
+                            return Padding(
+                              padding: EdgeInsets.all(16),
+                              child: SingleChildScrollView(
+                                controller: scrollController,
+                                child: Column(
+                                  children: [
+                                    Form(
+                                      key: formKey,
+                                      child: Column(
+                                        children: [
+                                          Row(
+                                            mainAxisAlignment: MainAxisAlignment.center,
+                                            children: [
+                                              Text(
+                                                DateFormat.yMd().format(spendDate),
+                                                style: TextStyle(fontSize: 20),
+                                              ),
+                                              TextButton(
+                                                onPressed: () async {
+                                                  final DateTime? pickedDate = await showDatePicker(
+                                                    context: context,
+                                                    initialDate: spendDate,
+                                                    firstDate: DateTime(2000),
+                                                    lastDate: DateTime(2100),
+                                                  );
+                                                  if (pickedDate != null && pickedDate != spendDate) {
+                                                    setModalState(() {
+                                                      spendDate = pickedDate;
+                                                    });
+                                                  }
+                                                },
+                                                child: Text('Choose Date'),
+                                              ),
+                                            ],
+                                          ),
+
+                                          TextFormField(
+                                            controller: reasonToSpendController,
+                                            decoration: const InputDecoration(
+                                                hintText: 'Reason to Spend'),
+                                            keyboardType: TextInputType.number,
+                                            onChanged: (value) {
+                                              setState(() {
+                                                reasonToSpend = value;
+                                              });
+                                            },
+                                          ),
+
+                                          // Price Input Field
+                                          TextFormField(
+                                            controller: amountSpentController,
+                                            decoration: const InputDecoration(
+                                                hintText: 'Spent Amount'),
+                                            keyboardType: TextInputType.number,
+                                            onChanged: (value) {
+                                              setState(() {
+                                                amountSpent =
+                                                    double.tryParse(value);
+                                              });
+                                            },
+                                          ),
+                                        ],
+                                      ),
+                                    ),
+                                    ElevatedButton(
+                                      onPressed: () {
+                                        if (formKey.currentState!.validate()) {
+                                          reasonToSpendController.clear();
+                                          amountSpentController.clear();
+                                          Navigator.pop(context);
+                                        }
+                                      },
+                                      child: Text('Save'),
+                                    )
+                                  ],
                                 ),
-                                ElevatedButton(
-                                  onPressed: () {
-                                    if (formKey.currentState!.validate()) {
-                                      Navigator.pop(context);
-                                    }
-                                  },
-                                  child: Text('Save'),
-                                )
-                              ],
-                            ),
-                          ),
+                              ),
+                            );
+                          },
                         );
                       },
                     );
@@ -187,7 +265,6 @@ class _MainPageState extends State<MainPage> {
     );
   }
 }
-
 
 /*
 FloatingActionButton(

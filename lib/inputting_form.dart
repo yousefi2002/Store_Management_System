@@ -24,7 +24,6 @@ class _MyFormPageState extends State<MyFormPage> {
   List<String> names = ['John', 'Doe', 'Smith'];
   List<String> usernames = ['user1', 'user2', 'user3'];
 
-  // Function to show date picker
   Future<void> _selectDate(BuildContext context) async {
     final DateTime? picked = await showDatePicker(
       context: context,
@@ -49,9 +48,8 @@ class _MyFormPageState extends State<MyFormPage> {
         padding: const EdgeInsets.all(16.0),
         child: Form(
           key: _formKey,
-          child: ListView(
+          child: Column(
             children: [
-              // Date Picker Field
               Row( mainAxisAlignment: MainAxisAlignment.center,
                 children: [
                   Text(
