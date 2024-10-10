@@ -1,23 +1,63 @@
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:store_ms/adding_product.dart';
+import 'package:store_ms/adding_users.dart';
+import 'package:store_ms/main_page.dart';
+import 'package:store_ms/settingDialog.dart';
 
 class DrawerContent {
   String title;
   IconData icon;
-  DrawerContent(this.title, this.icon);
+  Function onTap;
+  DrawerContent(this.title, this.icon, {required this.onTap});
 }
 
 class MyDrawer extends StatelessWidget {
-   MyDrawer({super.key});
-   final List<DrawerContent> items = [
-    DrawerContent('Setting', Icons.settings),
-    DrawerContent('Users', Icons.person),
-    DrawerContent('Buck Up', Icons.backup_outlined),
-    DrawerContent('Report', Icons.report_gmailerrorred),
-    DrawerContent('About', Icons.account_box_outlined),
-  ];
+  MyDrawer({super.key});
+
   @override
   Widget build(BuildContext context) {
+    final List<DrawerContent> items = [
+      DrawerContent('Setting', Icons.settings, onTap: () {
+        showDialog(
+          context: context,
+          builder: (context) => SettingsDialog(),
+        );
+      }),
+      DrawerContent('Users', Icons.person, onTap: () {
+        Navigator.of(context).push(
+          MaterialPageRoute(
+            builder: (context) => AddingUsers(),
+          ),
+        );
+      }),
+      DrawerContent('Product', Icons.production_quantity_limits, onTap: () {
+        Navigator.of(context).push(
+          MaterialPageRoute(
+            builder: (context) => AddingProduct(),
+          ),
+        );
+      }),
+      DrawerContent('Report', Icons.report_gmailerrorred, onTap: () {
+        Navigator.of(context).push(
+          MaterialPageRoute(
+            builder: (context) => MainPage(),
+          ),
+        );
+      }),
+      DrawerContent('Buck Up', Icons.backup_outlined, onTap: () {
+        Navigator.of(context).push(
+          MaterialPageRoute(
+            builder: (context) => MainPage(),
+          ),
+        );
+      }),
+      DrawerContent('About', Icons.account_box_outlined, onTap: () {
+        showDialog(
+          context: context,
+          builder: (context) => SettingsDialog(),
+        );
+      },),
+    ];
     return SafeArea(
       child: Drawer(
         backgroundColor: Colors.teal[300],
@@ -26,27 +66,43 @@ class MyDrawer extends StatelessWidget {
             CircleAvatar(
               backgroundColor: Colors.white,
               maxRadius: 50,
-              child: Icon(Icons.local_grocery_store, size: 50,),
+              child: Icon(
+                Icons.local_grocery_store,
+                size: 50,
+                color: Colors.orange[300],
+              ),
             ),
             const Divider(),
             Expanded(
               child: ListView.builder(
-                itemCount: items.length,
-                itemBuilder: (context, index) {
-                  return Padding(
-                    padding: EdgeInsets.only(top: 5, right: 5, left: 5),
-                    child: ListTile(
-                      shape: CircleBorder(),
-                      tileColor: Colors.white,
-                      leading: Icon(items[index].icon, color: Colors.orange[300],),
-                      horizontalTitleGap: 40,
-                      onTap: (){},
-                      title: Text(items[index].title, style: TextStyle(fontSize: 20),),
-                    ),
-                  );
-                }),
+                  itemCount: items.length,
+                  itemBuilder: (context, index) {
+                    return Padding(
+                      padding: EdgeInsets.only(top: 5, right: 5, left: 5),
+                      child: ListTile(
+                        shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(25)),
+                        tileColor: Colors.white,
+                        leading: Icon(
+                          items[index].icon,
+                          color: Colors.orange[300],
+                        ),
+                        horizontalTitleGap: 40,
+                        onTap: () {
+                          items[index].onTap();
+                          // Navigator.of(context).push(
+                          //   MaterialPageRoute(builder: (context) =>  items[index].onTap)
+                          // );
+                        },
+                        title: Text(
+                          items[index].title,
+                          style: TextStyle(fontSize: 20),
+                        ),
+                      ),
+                    );
+                  }),
             ),
-        ],
+          ],
         ),
       ),
     );
