@@ -12,11 +12,21 @@ class _AddingUsersState extends State<AddingUsers> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: Column(
-        children: [
-
-        ],
-      )
-    );
+        body: Column(
+      children: [
+        TextField(),
+        TextField(),
+        ElevatedButton(
+            onPressed: () {},
+            child: Row(
+              children: [
+                Icon(
+                  Icons.save,
+                ),
+                Text('Save'),
+              ],
+            ))
+      ],
+    ));
   }
 }
