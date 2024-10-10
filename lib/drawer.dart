@@ -2,7 +2,11 @@ import 'package:flutter/material.dart';
 import 'package:store_ms/adding_product.dart';
 import 'package:store_ms/adding_users.dart';
 import 'package:store_ms/main_page.dart';
+import 'package:store_ms/product_list.dart';
 import 'package:store_ms/settingDialog.dart';
+import 'package:store_ms/user_list.dart';
+
+import 'about_page.dart';
 
 class DrawerContent {
   String title;
@@ -26,14 +30,14 @@ class MyDrawer extends StatelessWidget {
       DrawerContent('Users', Icons.person, onTap: () {
         Navigator.of(context).push(
           MaterialPageRoute(
-            builder: (context) => AddingUsers(),
+            builder: (context) => UserList(),
           ),
         );
       }),
       DrawerContent('Product', Icons.production_quantity_limits, onTap: () {
         Navigator.of(context).push(
           MaterialPageRoute(
-            builder: (context) => AddingProduct(),
+            builder: (context) => ProductList(),
           ),
         );
       }),
@@ -54,7 +58,7 @@ class MyDrawer extends StatelessWidget {
       DrawerContent('About', Icons.account_box_outlined, onTap: () {
         showDialog(
           context: context,
-          builder: (context) => SettingsDialog(),
+          builder: (context) => AboutPage(),
         );
       },),
     ];

@@ -51,7 +51,16 @@ class _AddingProductState extends State<AddingProduct> {
                     TextField(
                       controller: userNameController,
                       decoration: InputDecoration(
-                          prefixIcon: Icon(Icons.person_add_alt_1),
+                          focusedBorder: OutlineInputBorder(
+                            borderSide: BorderSide(color: Colors.white,),
+                            borderRadius: BorderRadius.circular(25),
+                          ),
+                          enabledBorder: OutlineInputBorder(
+                            borderSide: BorderSide(color: Colors.white,),
+                            borderRadius: BorderRadius.circular(25),
+                          ),
+                          labelStyle: TextStyle(color: Colors.white),
+                          prefixIcon: Icon(Icons.person_add_alt_1, color: Colors.white,),
                           label: Text('Pruduct Name'),
                           border: OutlineInputBorder(
                             borderRadius: BorderRadius.circular(25),
@@ -63,8 +72,17 @@ class _AddingProductState extends State<AddingProduct> {
                     TextField(
                       controller: phoneNumberController,
                       decoration: InputDecoration(
-                          prefixIcon: Icon(Icons.phone_android),
-                          label: Text('Amount in Meter'),
+                          focusedBorder: OutlineInputBorder(
+                            borderSide: BorderSide(color: Colors.white,),
+                            borderRadius: BorderRadius.circular(25),
+                          ),
+                          enabledBorder: OutlineInputBorder(
+                            borderSide: BorderSide(color: Colors.white,),
+                            borderRadius: BorderRadius.circular(25),
+                          ),
+                          labelStyle: TextStyle(color: Colors.white),
+                          prefixIcon: Icon(Icons.numbers, color: Colors.white,),
+                          label: Text('Amount'),
                           border: OutlineInputBorder(
                             borderRadius: BorderRadius.circular(25),
                           )),

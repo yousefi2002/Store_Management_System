@@ -51,7 +51,16 @@ class _AddingUsersState extends State<AddingUsers> {
                     TextField(
                       controller: userNameController,
                       decoration: InputDecoration(
-                          prefixIcon: Icon(Icons.person_add_alt_1),
+                          focusedBorder: OutlineInputBorder(
+                            borderSide: BorderSide(color: Colors.white,),
+                            borderRadius: BorderRadius.circular(25),
+                          ),
+                          enabledBorder: OutlineInputBorder(
+                            borderSide: BorderSide(color: Colors.white,),
+                            borderRadius: BorderRadius.circular(25),
+                          ),
+                          labelStyle: TextStyle(color: Colors.white),
+                          prefixIcon: Icon(Icons.person_add_alt_1, color: Colors.white,),
                           label: Text('Full Name'),
                           border: OutlineInputBorder(
                             borderRadius: BorderRadius.circular(25),
@@ -63,7 +72,16 @@ class _AddingUsersState extends State<AddingUsers> {
                     TextField(
                       controller: phoneNumberController,
                       decoration: InputDecoration(
-                        prefixIcon: Icon(Icons.phone_android),
+                          focusedBorder: OutlineInputBorder(
+                            borderSide: BorderSide(color: Colors.white,),
+                            borderRadius: BorderRadius.circular(25),
+                          ),
+                          enabledBorder: OutlineInputBorder(
+                            borderSide: BorderSide(color: Colors.white,),
+                            borderRadius: BorderRadius.circular(25),
+                          ),
+                          labelStyle: TextStyle(color: Colors.white),
+                        prefixIcon: Icon(Icons.phone_android, color: Colors.white,),
                         label: Text('Phone Number'),
                         border: OutlineInputBorder(
                           borderRadius: BorderRadius.circular(25),
