@@ -1,4 +1,3 @@
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:store_ms/drawer.dart';
@@ -24,19 +23,19 @@ class _MainPageState extends State<MainPage> {
   final formKey = GlobalKey<FormState>();
   DateTime maniPageDate = DateTime.now();
 
-  Future<void> _selectDate(BuildContext context) async {
-    final DateTime? pickedDate = await showDatePicker(
-      context: context,
-      initialDate: spendDate,
-      firstDate: DateTime(2000),
-      lastDate: DateTime(2100),
-    );
-    if (pickedDate != null && pickedDate != spendDate) {
-      setState(() {
-        spendDate = pickedDate;
-      });
-    }
-  }
+  // Future<void> _selectDate(BuildContext context) async {
+  //   final DateTime? pickedDate = await showDatePicker(
+  //     context: context,
+  //     initialDate: spendDate,
+  //     firstDate: DateTime(2000),
+  //     lastDate: DateTime(2100),
+  //   );
+  //   if (pickedDate != null && pickedDate != spendDate) {
+  //     setState(() {
+  //       spendDate = pickedDate;
+  //     });
+  //   }
+  // }
 
   @override
   Widget build(BuildContext context) {
