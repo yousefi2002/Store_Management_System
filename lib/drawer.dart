@@ -1,8 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:store_ms/adding_product.dart';
-import 'package:store_ms/adding_users.dart';
 import 'package:store_ms/main_page.dart';
 import 'package:store_ms/product_list.dart';
+import 'package:store_ms/report_page.dart';
 import 'package:store_ms/settingDialog.dart';
 import 'package:store_ms/user_list.dart';
 
@@ -44,7 +43,7 @@ class MyDrawer extends StatelessWidget {
       DrawerContent('Report', Icons.report_gmailerrorred, onTap: () {
         Navigator.of(context).push(
           MaterialPageRoute(
-            builder: (context) => MainPage(),
+            builder: (context) => ReportPage(),
           ),
         );
       }),
