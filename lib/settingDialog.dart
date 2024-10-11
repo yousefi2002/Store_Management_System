@@ -51,6 +51,9 @@ class _SettingsDialogState extends State<SettingsDialog> {
               children: [
                 Text('Dark Mode'),
                 Switch(
+                  activeColor: Colors.teal[300],
+                  inactiveThumbColor: Colors.teal[300],
+                  inactiveTrackColor: Colors.orange[300],
                   value: isDarkMode,
                   onChanged: (value) {
                     setState(() {
@@ -68,6 +71,8 @@ class _SettingsDialogState extends State<SettingsDialog> {
               children: [
                 Text('Font Size'),
                 Slider(
+                  activeColor: Colors.teal[300],
+                  inactiveColor: Colors.orange,
                   value: fontSize,
                   min: 12.0,
                   max: 24.0,
@@ -84,6 +89,7 @@ class _SettingsDialogState extends State<SettingsDialog> {
             // Language selection
             Text('Language'),
             RadioListTile<String>(
+              activeColor: Colors.teal[300],
               title: Text('English'),
               value: 'English',
               groupValue: selectedLanguage,
@@ -95,6 +101,7 @@ class _SettingsDialogState extends State<SettingsDialog> {
               },
             ),
             RadioListTile<String>(
+              activeColor: Colors.teal[300],
               title: Text('فارسی'),
               value: 'Persian',
               groupValue: selectedLanguage,
@@ -113,7 +120,7 @@ class _SettingsDialogState extends State<SettingsDialog> {
           onPressed: () {
             Navigator.of(context).pop();
           },
-          child: Text('Close'),
+          child: Text('Close', style: TextStyle(color: Colors.orange),),
         ),
       ],
     );
