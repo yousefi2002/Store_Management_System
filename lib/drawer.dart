@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:store_ms/expenses_list.dart';
 import 'package:store_ms/main_page.dart';
 import 'package:store_ms/product_list.dart';
 import 'package:store_ms/report_page.dart';
@@ -54,6 +55,13 @@ class MyDrawer extends StatelessWidget {
           ),
         );
       }),
+      DrawerContent('Expenses Report', Icons.exposure_neg_1_sharp, onTap: () {
+        Navigator.of(context).push(
+          MaterialPageRoute(
+            builder: (context) => ExpensesList(),
+          ),
+        );
+      },),
       DrawerContent('About', Icons.account_box_outlined, onTap: () {
         showDialog(
           context: context,
