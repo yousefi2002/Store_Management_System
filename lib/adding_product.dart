@@ -1,22 +1,80 @@
+import 'package:delightful_toast/delight_toast.dart';
+import 'package:delightful_toast/toast/components/toast_card.dart';
+import 'package:delightful_toast/toast/utils/enums.dart';
 import 'package:flutter/material.dart';
+import 'package:store_ms/database_helper.dart';
+import 'package:store_ms/model_classes/product.dart';
 
 class AddingProduct extends StatefulWidget {
-  const AddingProduct({super.key});
+  final Product product;
+  const AddingProduct(this.product, {super.key});
 
   @override
-  State<AddingProduct> createState() => _AddingProductState();
+  State<AddingProduct> createState() => _AddingProductState(this.product);
 }
 
 class _AddingProductState extends State<AddingProduct> {
-  TextEditingController userNameController = TextEditingController();
-  TextEditingController phoneNumberController = TextEditingController();
+  _AddingProductState(this.product);
+  DatabaseHelper databaseHelper = DatabaseHelper();
+  TextEditingController productNameController = TextEditingController();
+
+  Product product;
+  String? productName;
+
+  void saveProduct() async {
+    if (productNameController.text.isEmpty) {
+      DelightToastBar(
+        builder: (BuildContext context) {
+          return const ToastCard(
+            color: Colors.red,
+            title: Text(
+              'Pleas fill out all fields',
+            style: TextStyle(color: Colors.white),
+            ),
+          );
+        },
+        position: DelightSnackbarPosition.top,
+        autoDismiss: true,
+        snackbarDuration: Durations.extralong4,
+        ).show(
+        context,
+      );
+      return;
+    }
+    product = Product(productName);
+    int result;
+    if (product.id != null) {
+      result = await databaseHelper.updateProduct(product);
+    } else {
+      result = await databaseHelper.insertProduct(product);
+    }
+
+    if (result != 0) {
+      ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+        backgroundColor: Colors.grey,
+        content: Text('Data saved successfully',
+            style: TextStyle(color: Colors.black)),
+      ));
+      productNameController.clear();
+    } else {
+      ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+        backgroundColor: Colors.red,
+        content:
+            Text('Failed to save data', style: TextStyle(color: Colors.white)),
+      ));
+      return;
+    }
+
+    Navigator.pop(context, true);
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
         foregroundColor: Colors.white,
         backgroundColor: Colors.teal,
-        title: Text('Add Product'),
+        title: const Text('Add Product'),
       ),
       backgroundColor: Colors.white,
       body: Stack(
@@ -49,45 +107,40 @@ class _AddingProductState extends State<AddingProduct> {
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
                     TextField(
-                      controller: userNameController,
+                      controller: productNameController,
                       decoration: InputDecoration(
-                          focusedBorder: OutlineInputBorder(
-                            borderSide: BorderSide(color: Colors.white,),
-                            borderRadius: BorderRadius.circular(25),
+                        focusedBorder: OutlineInputBorder(
+                          borderSide: const BorderSide(
+                            color: Colors.white,
                           ),
-                          enabledBorder: OutlineInputBorder(
-                            borderSide: BorderSide(color: Colors.white,),
-                            borderRadius: BorderRadius.circular(25),
+                          borderRadius: BorderRadius.circular(25),
+                        ),
+                        enabledBorder: OutlineInputBorder(
+                          borderSide: const BorderSide(
+                            color: Colors.white,
                           ),
-                          labelStyle: TextStyle(color: Colors.white),
-                          prefixIcon: Icon(Icons.person_add_alt_1, color: Colors.white,),
-                          label: Text('Pruduct Name'),
-                          border: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(25),
-                          )),
+                          borderRadius: BorderRadius.circular(25),
+                        ),
+                        labelStyle: const TextStyle(color: Colors.white),
+                        prefixIcon: const Icon(
+                          Icons.person_add_alt_1,
+                          color: Colors.white,
+                        ),
+                        label: const Text('Product Name'),
+                        border: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(25),
+                        ),
+                      ),
+                      onChanged: (value) {
+                        setState(() {
+                          productName = value;
+                        });
+                      },
                     ),
-                    SizedBox(
+                    const SizedBox(
                       height: 15,
                     ),
-                    TextField(
-                      controller: phoneNumberController,
-                      decoration: InputDecoration(
-                          focusedBorder: OutlineInputBorder(
-                            borderSide: BorderSide(color: Colors.white,),
-                            borderRadius: BorderRadius.circular(25),
-                          ),
-                          enabledBorder: OutlineInputBorder(
-                            borderSide: BorderSide(color: Colors.white,),
-                            borderRadius: BorderRadius.circular(25),
-                          ),
-                          labelStyle: TextStyle(color: Colors.white),
-                          prefixIcon: Icon(Icons.numbers, color: Colors.white,),
-                          label: Text('Amount'),
-                          border: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(25),
-                          )),
-                    ),
-                    SizedBox(
+                    const SizedBox(
                       height: 15,
                     ),
                     ElevatedButton(
@@ -95,8 +148,10 @@ class _AddingProductState extends State<AddingProduct> {
                         backgroundColor: Colors.white,
                         foregroundColor: Colors.black,
                       ),
-                      onPressed: () {},
-                      child: Row(
+                      onPressed: () {
+                        saveProduct();
+                      },
+                      child: const Row(
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
                           Icon(
