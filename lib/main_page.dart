@@ -1,8 +1,12 @@
 import 'package:flutter/material.dart';
-import 'package:intl/intl.dart';
+import 'package:sqflite/sqflite.dart';
 import 'package:store_ms/drawer.dart';
 import 'package:flutter_speed_dial/flutter_speed_dial.dart';
-import 'inputting_form.dart';
+import 'package:store_ms/expenses_page.dart';
+import 'package:store_ms/model_classes/sell.dart';
+import 'database_helper.dart';
+import 'model_classes/expenses.dart';
+import 'new_sell_page.dart';
 
 class MainPage extends StatefulWidget {
   const MainPage({super.key});
@@ -12,30 +16,36 @@ class MainPage extends StatefulWidget {
 }
 
 class _MainPageState extends State<MainPage> {
-  TextEditingController reasonToSpendController = TextEditingController();
-  TextEditingController amountSpentController = TextEditingController();
-  List items = ['مخمل', 'ساتن', 'کریپ'];
-  late int numberOfSales;
-  late double totalAmount;
-  DateTime spendDate = DateTime.now();
-  String? reasonToSpend;
-  double? amountSpent;
-  final formKey = GlobalKey<FormState>();
-  DateTime maniPageDate = DateTime.now();
+  DatabaseHelper databaseHelper = DatabaseHelper();
 
-  // Future<void> _selectDate(BuildContext context) async {
-  //   final DateTime? pickedDate = await showDatePicker(
-  //     context: context,
-  //     initialDate: spendDate,
-  //     firstDate: DateTime(2000),
-  //     lastDate: DateTime(2100),
-  //   );
-  //   if (pickedDate != null && pickedDate != spendDate) {
-  //     setState(() {
-  //       spendDate = pickedDate;
-  //     });
-  //   }
-  // }
+  List<Sell> sales = [];
+  List<Expenses> expensesItems = [];
+  final now = DateTime.now();
+  late int numberOfSales = sales.length;
+  int count = 0;
+  int totalEarnedMoney = 0;
+  String mainPageDate = '';
+
+  void _updateDateTime() {
+    setState(() {
+      mainPageDate = '${now.year}-${now.month}-${now.day}';
+    });
+  }
+
+  Future<void> _getTotalSalesOfToday() async{
+    int sales = await databaseHelper.getTotalSalesForDay(mainPageDate);
+    setState(() {
+      totalEarnedMoney = sales;
+    });
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    updateSellList();
+    _getTotalSalesOfToday();
+    _updateDateTime();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -46,7 +56,7 @@ class _MainPageState extends State<MainPage> {
         backgroundColor: Colors.teal[500],
         title: Text('Store Management'),
       ),
-      body: items.isEmpty
+      body: sales.isEmpty
           ? Center(
               child: Text(
                 'Nothing sold yet',
@@ -71,7 +81,7 @@ class _MainPageState extends State<MainPage> {
                         children: [
                           Center(
                               child: Text(
-                            '${maniPageDate.year}-${maniPageDate.month}-${maniPageDate.day}',
+                            mainPageDate,
                             style: TextStyle(fontSize: 20),
                           )),
                           Divider(),
@@ -79,7 +89,7 @@ class _MainPageState extends State<MainPage> {
                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
                             children: [
                               Text(
-                                "${numberOfSales = 15}",
+                                sales.length.toString(),
                                 style: TextStyle(fontSize: 20),
                               ),
                               Text(
@@ -93,11 +103,11 @@ class _MainPageState extends State<MainPage> {
                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
                             children: [
                               Text(
-                                "${numberOfSales = 9000}",
+                                "$totalEarnedMoney AFs",
                                 style: TextStyle(fontSize: 20),
                               ),
                               Text(
-                                'کل جمع',
+                                'جمع کل فروش',
                                 style: TextStyle(fontSize: 20),
                               ),
                             ],
@@ -106,10 +116,11 @@ class _MainPageState extends State<MainPage> {
                       ),
                     ),
                   ),
-                )),
+                ),
+              ),
                 Expanded(
                   child: ListView.builder(
-                      itemCount: items.length,
+                      itemCount: sales.length,
                       itemBuilder: (context, index) {
                         return Padding(
                           padding: const EdgeInsets.symmetric(horizontal: 8.0),
@@ -119,9 +130,14 @@ class _MainPageState extends State<MainPage> {
                             child: ListTile(
                               textColor: Colors.white,
                               iconColor: Colors.white,
-                              leading: Text(items[index]),
+                              onTap: () {
+                                 // databaseHelper.truncateExpensesTable();
+                              },
+                              title: Text(
+                                  '${sales[index].productName} : ${sales[index].amount}'),
+                              subtitle: Text(sales[index].price.toString()),
                               trailing: IconButton(
-                                onPressed: () {},
+                                onPressed: () => _deleteSell(context, sales[index]),
                                 icon: Icon(Icons.delete),
                               ),
                             ),
@@ -134,10 +150,10 @@ class _MainPageState extends State<MainPage> {
       floatingActionButton: SpeedDial(
         icon: Icons.add,
         activeIcon: Icons.close,
-        backgroundColor: Colors.teal[300],
+        backgroundColor: Colors.teal[100],
         foregroundColor: Colors.white,
         overlayColor: Colors.white,
-        overlayOpacity: 0.5,
+        elevation: 50,
         children: [
           SpeedDialChild(
             backgroundColor: Colors.teal[300],
@@ -148,161 +164,64 @@ class _MainPageState extends State<MainPage> {
             labelStyle:
                 TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
             onTap: () {
-              Navigator.of(context).push(
-                  MaterialPageRoute(builder: (context) => const MyFormPage()));
+              navigateToInput(Sell('', '', 0, 0, ''));
             },
           ),
           SpeedDialChild(
             backgroundColor: Colors.teal[300],
             foregroundColor: Colors.white,
-            child: Icon(Icons.shopping_cart),
+            child: const Icon(Icons.shopping_cart),
             label: 'Buy',
             labelBackgroundColor: Colors.teal[300],
             labelStyle:
-                TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
+                const TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
             onTap: () {
-              showModalBottomSheet(
-                  context: context,
-                  isScrollControlled: true,
-                  builder: (context) {
-                    return StatefulBuilder(
-                      builder: (BuildContext context, StateSetter setModalState ) {
-                        return DraggableScrollableSheet(
-                          initialChildSize: 0.5,
-                          minChildSize: 0.4,
-                          maxChildSize: 0.7,
-                          expand: false,
-                          builder: (BuildContext context,
-                              ScrollController scrollController) {
-                            return Padding(
-                              padding: EdgeInsets.all(16),
-                              child: SingleChildScrollView(
-                                controller: scrollController,
-                                child: Column(
-                                  children: [
-                                    Form(
-                                      key: formKey,
-                                      child: Column(
-                                        children: [
-                                          Row(
-                                            mainAxisAlignment: MainAxisAlignment.center,
-                                            children: [
-                                              Text(
-                                                DateFormat.yMd().format(spendDate),
-                                                style: TextStyle(fontSize: 20),
-                                              ),
-                                              TextButton(
-                                                onPressed: () async {
-                                                  final DateTime? pickedDate = await showDatePicker(
-                                                    context: context,
-                                                    initialDate: spendDate,
-                                                    firstDate: DateTime(2000),
-                                                    lastDate: DateTime(2100),
-                                                  );
-                                                  if (pickedDate != null && pickedDate != spendDate) {
-                                                    setModalState(() {
-                                                      spendDate = pickedDate;
-                                                    });
-                                                  }
-                                                },
-                                                child: Text('Choose Date'),
-                                              ),
-                                            ],
-                                          ),
-
-                                          TextFormField(
-                                            controller: reasonToSpendController,
-                                            decoration: const InputDecoration(
-                                                hintText: 'Reason to Spend'),
-                                            keyboardType: TextInputType.number,
-                                            onChanged: (value) {
-                                              setState(() {
-                                                reasonToSpend = value;
-                                              });
-                                            },
-                                          ),
-
-                                          // Price Input Field
-                                          TextFormField(
-                                            controller: amountSpentController,
-                                            decoration: const InputDecoration(
-                                                hintText: 'Spent Amount'),
-                                            keyboardType: TextInputType.number,
-                                            onChanged: (value) {
-                                              setState(() {
-                                                amountSpent =
-                                                    double.tryParse(value);
-                                              });
-                                            },
-                                          ),
-                                        ],
-                                      ),
-                                    ),
-                                    ElevatedButton(
-                                      onPressed: () {
-                                        if (formKey.currentState!.validate()) {
-                                          reasonToSpendController.clear();
-                                          amountSpentController.clear();
-                                          Navigator.pop(context);
-                                        }
-                                      },
-                                      child: Text('Save'),
-                                    )
-                                  ],
-                                ),
-                              ),
-                            );
-                          },
-                        );
-                      },
-                    );
-                  });
+              Navigator.of(context).push(
+                MaterialPageRoute(builder: (context) => const ExpensesPage()),
+              );
             },
           ),
         ],
       ),
     );
   }
-}
 
-/*
-FloatingActionButton(
-                  onPressed: () {
-                    showDialog(
-                        context: context,
-                        builder: (context) {
-                          return AlertDialog(
-                            backgroundColor: Colors.teal,
-                            content: Text(
-                              'Decide what to add',
-                              style:
-                                  TextStyle(fontSize: 20, color: Colors.white),
-                            ),
-                            actions: [
-                              ElevatedButton(
-                                onPressed: () {
-                                },
-                                child: Text('Add Product'),
-                                style: ElevatedButton.styleFrom(
-                                    foregroundColor: Colors.white,
-                                    backgroundColor: Colors.orange[300]),
-                              ),
-                              ElevatedButton(
-                                onPressed: () {
-                                },
-                                style: ElevatedButton.styleFrom(
-                                    foregroundColor: Colors.white,
-                                    backgroundColor: Colors.orange[300]),
-                                child: const Text('Add Sales'),
-                              ),
-                            ],
-                          );
-                        });
-                  },
-                  backgroundColor: Colors.teal,
-                  child: Icon(
-                    Icons.add,
-                    color: Colors.white,
-                  ),
-                )
- */
+  void updateSellList() {
+    Future<Database> dbFuture = databaseHelper.initDatabase();
+    dbFuture.then((database) {
+      Future<List<Sell>> sellListFuture = databaseHelper.getSalesOfToday(mainPageDate);
+      sellListFuture.then((salesList) {
+        setState(() {
+          sales = salesList;
+          count = sales.length;
+          _getTotalSalesOfToday();
+        });
+      });
+    });
+  }
+
+  void _deleteSell(BuildContext context, Sell soldProduct) async {
+    var result = await databaseHelper.deleteSell(soldProduct);
+    if (result != 0) {
+      ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+          backgroundColor: Colors.red,
+          content: Text(
+            'Sold item got deleted',
+            style: TextStyle(color: Colors.black),
+          )));
+      updateSellList();
+      _getTotalSalesOfToday();
+    }
+  }
+
+  void navigateToInput(Sell input) async {
+    var result = await Navigator.of(context)
+        .push(MaterialPageRoute(builder: (_) => NewSellPage(input)));
+    if (result == true) {
+      updateSellList();
+      if(mainPageDate == '${now.year}-${now.month}-${now.day}'){
+        _getTotalSalesOfToday();
+      }
+    }
+  }
+}

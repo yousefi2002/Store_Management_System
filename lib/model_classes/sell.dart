@@ -1,25 +1,25 @@
-class InputtingModel {
+class Sell {
   int? _id;
   String? _date;
   String? _productName;
   double? _amount;
   int? _price;
-  String? _seller;
+  String? _user;
 
-  InputtingModel(
+  Sell(
     this._date,
     this._productName,
     this._amount,
     this._price,
-    this._seller,
+    this._user,
   );
 
-  int get id => _id!;
+  int? get id => _id;
   String get date => _date!;
   String get productName => _productName!;
   double get amount => _amount!;
   int get price => _price!;
-  String get seller => _seller!;
+  String get user => _user!;
 
   set date(String newDate) {
     _date = date;
@@ -37,28 +37,32 @@ class InputtingModel {
     _price = price;
   }
 
-  set seller(String newSeller) {
-    _seller = seller;
+  set user(String newUser) {
+    _user = user;
   }
 
   Map<String, dynamic> toMap() {
     var map = <String, dynamic>{};
     map["id"] = _id;
     map["date"] = _date;
-    map["productName"] = _productName;
+    map["pr_name"] = _productName;
     map["amount"] = _amount;
     map["price"] = _price;
-    map["seller"] = seller;
-
+    map["user"] = user;
     return map;
   }
 
-  InputtingModel.fromMapObject(Map<String, dynamic> map) {
+  Sell.fromMapObject(Map<String, dynamic> map) {
     _id = map["id"];
     _date = map["date"];
-    _productName = map["productName"];
+    _productName = map["pr_name"];
     _amount = map["amount"];
     _price = map["price"];
-    _seller = map["seller"];
+    _user = map["user"];
+  }
+
+  @override
+  String toString() {
+    return "id= $_id, date = $_date";
   }
 }

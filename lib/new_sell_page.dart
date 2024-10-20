@@ -1,29 +1,53 @@
 import 'package:flutter/material.dart';
-import 'package:intl/intl.dart';
+import 'package:sqflite/sqflite.dart';
+import 'package:store_ms/database_helper.dart';
+import 'package:store_ms/model_classes/sell.dart';
+import 'model_classes/product.dart';
+import 'model_classes/user.dart';
 
-class MyFormPage extends StatefulWidget {
-  const MyFormPage({super.key});
+class NewSellPage extends StatefulWidget {
+  final Sell sell;
+  const NewSellPage(this.sell, {super.key,});
 
   @override
-  _MyFormPageState createState() => _MyFormPageState();
+  _NewSellPageState createState() =>
+      _NewSellPageState(this.sell,);
 }
 
-class _MyFormPageState extends State<MyFormPage> {
+class _NewSellPageState extends State<NewSellPage> {
+  _NewSellPageState(this.sell);
+
+  DatabaseHelper databaseHelper = DatabaseHelper();
   final _formKey = GlobalKey<FormState>();
-  TextEditingController meterController = TextEditingController();
+  TextEditingController amountController = TextEditingController();
   TextEditingController priceController = TextEditingController();
 
   // State variables
-  DateTime _selectedDate = DateTime.now();
-  String? _selectedName;
-  double? _inputText;
-  double? _price;
-  String? _selectedUsername;
+  // int count = 0;
+  DateTime now = DateTime.now();
+  double? _amount;
+  String? _selectedDate;
+  int? _price;
+  Sell sell;
+  User? selectedUser;
+  Product? selectedProduct;
 
   // Dropdown options
-  List<String> names = ['John', 'Doe', 'Smith'];
-  List<String> usernames = ['user1', 'user2', 'user3'];
+  List<Product> productName = [];
+  List<User> usernames = [];
 
+  @override
+  void initState() {
+    super.initState();
+    updateProductList();
+    updateUsersList();
+    _updateDateTime();
+  }
+  void _updateDateTime() {
+    setState(() {
+      _selectedDate = '${now.year}-${now.month}-${now.day}';
+    });
+  }
   Future<void> _selectDate(BuildContext context) async {
     final DateTime? picked = await showDatePicker(
       context: context,
@@ -31,12 +55,45 @@ class _MyFormPageState extends State<MyFormPage> {
       firstDate: DateTime(2000),
       lastDate: DateTime(2100),
     );
-    if (picked != null && picked != _selectedDate) {
+    if (picked != null && "${picked.year}-${picked.month}-${picked.day}" != _selectedDate) {
       setState(() {
-        _selectedDate = picked;
+        _selectedDate = '${picked.year}-${picked.month}-${picked.day}';
       });
     }
   }
+
+  void saveInput() async {
+    if (selectedProduct == null || _amount == null || _price == null || selectedUser == null) {
+      ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+        backgroundColor: Colors.red,
+        content: Text('Please fill out all fields', style: TextStyle(color: Colors.white)),
+      ));
+      return;
+    }
+  sell = Sell(_selectedDate.toString(), selectedProduct?.productName, _amount, _price, selectedUser?.userName);
+    int result;
+    if (sell.id != null) {
+      result = await databaseHelper.updateSell(sell);
+    } else {
+      result = await databaseHelper.insertSell(sell);
+    }
+
+    if (result != 0) {
+      ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+        backgroundColor: Colors.grey,
+        content: Text('Data saved successfully', style: TextStyle(color: Colors.black)),
+      ));
+    } else {
+      ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+        backgroundColor: Colors.red,
+        content: Text('Failed to save data', style: TextStyle(color: Colors.white)),
+      ));
+      return;
+    }
+
+    Navigator.pop(context, true);
+  }
+
 
   @override
   Widget build(BuildContext context) {
@@ -69,7 +126,7 @@ class _MyFormPageState extends State<MyFormPage> {
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
                           Text(
-                            DateFormat.yMd().format(_selectedDate),
+                            _selectedDate!,
                             style: TextStyle(fontSize: 20, color: Colors.white),
                           ),
                           Expanded(
@@ -88,7 +145,7 @@ class _MyFormPageState extends State<MyFormPage> {
                         height: 10,
                       ),
                       // Name Dropdown
-                      DropdownButtonFormField<String>(
+                      DropdownButtonFormField<Product>(
                         dropdownColor: Colors.teal[200],
                         iconEnabledColor: Colors.white,
                         decoration: InputDecoration(
@@ -109,17 +166,17 @@ class _MyFormPageState extends State<MyFormPage> {
                           style: TextStyle(color: Colors.white),
                         ),
                         borderRadius: BorderRadius.circular(25),
-                        value: _selectedName,
+                        value: selectedProduct,
                         style: TextStyle(color: Colors.white),
-                        items: names.map((String name) {
-                          return DropdownMenuItem<String>(
+                        items: productName.map((Product name) {
+                          return DropdownMenuItem<Product>(
                             value: name,
-                            child: Text(name),
+                            child: Text(name.productName),
                           );
                         }).toList(),
-                        onChanged: (newValue) {
+                        onChanged: (Product? newValue) {
                           setState(() {
-                            _selectedName = newValue;
+                            selectedProduct= newValue!;
                           });
                         },
                       ),
@@ -128,7 +185,8 @@ class _MyFormPageState extends State<MyFormPage> {
                       ),
                       // Text Input Field
                       TextFormField(
-                        controller: meterController,
+                        controller: amountController,
+                        style: TextStyle(color: Colors.white),
                         decoration: InputDecoration(
                             focusedBorder: OutlineInputBorder(
                               borderSide: BorderSide(color: Colors.white,),
@@ -148,7 +206,8 @@ class _MyFormPageState extends State<MyFormPage> {
                         keyboardType: TextInputType.number,
                         onChanged: (value) {
                           setState(() {
-                            _inputText = double.parse(value);
+                            _amount = double.tryParse(value);
+
                           });
                         },
                       ),
@@ -158,6 +217,7 @@ class _MyFormPageState extends State<MyFormPage> {
                       // Price Input Field
                       TextFormField(
                         controller: priceController,
+                        style: TextStyle(color: Colors.white),
                         decoration: InputDecoration(
                             focusedBorder: OutlineInputBorder(
                               borderSide: BorderSide(color: Colors.white,),
@@ -177,7 +237,10 @@ class _MyFormPageState extends State<MyFormPage> {
                         keyboardType: TextInputType.number,
                         onChanged: (value) {
                           setState(() {
-                            _price = double.tryParse(value);
+                            _price = int.parse(value);
+                            if(_price != null){
+                              sell.price = _price!;
+                            }
                           });
                         },
                       ),
@@ -185,7 +248,7 @@ class _MyFormPageState extends State<MyFormPage> {
                         height: 10,
                       ),
                       // Username Dropdown
-                      DropdownButtonFormField<String>(
+                      DropdownButtonFormField<User>(
                         dropdownColor: Colors.teal[200],
                         iconEnabledColor: Colors.white,
                         decoration: InputDecoration(
@@ -207,17 +270,17 @@ class _MyFormPageState extends State<MyFormPage> {
                           'Seller',
                           style: TextStyle(color: Colors.white),
                         ),
-                        value: _selectedUsername,
+                        value: selectedUser,
                         style: TextStyle(color: Colors.white),
-                        items: usernames.map((String username) {
-                          return DropdownMenuItem<String>(
-                            value: username,
-                            child: Text(username),
+                        items: usernames.map((User user) {
+                          return DropdownMenuItem<User>(
+                            value: user,
+                            child: Text(user.userName),
                           );
                         }).toList(),
-                        onChanged: (newValue) {
+                        onChanged: (User? newValue) {
                           setState(() {
-                            _selectedUsername = newValue;
+                            selectedUser = newValue;
                           });
                         },
                       ),
@@ -231,20 +294,15 @@ class _MyFormPageState extends State<MyFormPage> {
                         ),
                         onPressed: () {
                           if (_formKey.currentState!.validate()) {
-                            // Save form data or perform action
-                            print('Date: $_selectedDate');
-                            print('Name: $_selectedName');
-                            print('Text: $_inputText');
-                            print('Price: $_price');
-                            print('Username: $_selectedUsername');
                           }
-                          meterController.clear();
+                          saveInput();
+                          amountController.clear();
                           priceController.clear();
                           setState(() {
-                            _selectedName = null;
+                            selectedProduct = null;
                           });
                         },
-                        child: Text('Save'),
+                        child: const Text('Save'),
                       ),
                     ],
                   ),
@@ -255,5 +313,28 @@ class _MyFormPageState extends State<MyFormPage> {
         ],
       ),
     );
+  }
+  void updateProductList() {
+    Future<Database> dbFuture = databaseHelper.initDatabase();
+    dbFuture.then((database) {
+      Future<List<Product>> userListFuture = databaseHelper.getProductList();
+      userListFuture.then((productList) {
+        setState(() {
+          productName = productList;
+        });
+      });
+    });
+  }
+
+  void updateUsersList() {
+    Future<Database> dbFuture = databaseHelper.initDatabase();
+    dbFuture.then((database) {
+      Future<List<User>> userListFuture = databaseHelper.getUsersList();
+      userListFuture.then((userList) {
+        setState(() {
+          usernames = userList;
+        });
+      });
+    });
   }
 }

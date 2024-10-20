@@ -1,5 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:sqflite/sqflite.dart';
 import 'package:store_ms/adding_product.dart';
+import 'package:store_ms/database_helper.dart';
+import 'model_classes/product.dart';
 
 class ProductList extends StatefulWidget {
   const ProductList({super.key});
@@ -7,14 +10,16 @@ class ProductList extends StatefulWidget {
   @override
   State<ProductList> createState() => _ProductListState();
 }
-class Product{
-  String name;
-  String amount;
-  Product(this.name, this.amount);
-}
 
 class _ProductListState extends State<ProductList> {
-  List<Product> productList = [];
+  DatabaseHelper databaseHelper = DatabaseHelper();
+  List<Product> addedProduct = [];
+  int count = 0;
+  @override
+  void initState() {
+    super.initState();
+    updateProductList();
+  }
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -23,21 +28,65 @@ class _ProductListState extends State<ProductList> {
         backgroundColor: Colors.teal[300],
         foregroundColor: Colors.white,
       ),
-      body: productList.isEmpty?
+      body: addedProduct.isEmpty?
       Center(child: Text('No product added', style: TextStyle(fontSize: 35),),):
       ListView.builder(
-          itemCount: productList.length,
+          itemCount: addedProduct.length,
           itemBuilder: (context, index){
-            return ListTile(
-              title: Text(productList[index].name),
-              subtitle: Text(productList[index].amount),
+            return Padding(
+              padding: const EdgeInsets.only(top: 10, right: 10, left: 10),
+              child: ListTile(
+                tileColor: Colors.teal[300],
+                title: Text(addedProduct[index].productName),
+                trailing: IconButton(
+                  onPressed: (){
+                    _deleteProduct(context, addedProduct[index]);
+                  },
+                  icon: Icon(Icons.delete),),
+              ),
             );
           }),
       floatingActionButton: FloatingActionButton(
-        onPressed: () => Navigator.of(context).push(MaterialPageRoute(builder: (context) => AddingProduct(),),),
+        onPressed: (){
+          navigateToAddProduct(Product(''),);
+        },
         child: Icon(Icons.add, color: Colors.white,),
         backgroundColor: Colors.teal[300],
       ),
     );
+  }
+
+  void updateProductList() {
+    Future<Database> dbFuture = databaseHelper.initDatabase();
+    dbFuture.then((database) {
+      Future<List<Product>> userListFuture = databaseHelper.getProductList();
+      userListFuture.then((productList) {
+        setState(() {
+          addedProduct = productList;
+          count = addedProduct.length;
+        });
+      });
+    });
+  }
+
+  void _deleteProduct(BuildContext context, Product product) async {
+    var result = await databaseHelper.deleteProduct(product);
+    if (result != 0) {
+      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+          backgroundColor: Colors.grey[400],
+          content: Text(
+            'Product got deleted',
+            style: TextStyle(color: Colors.black),
+          )));
+      updateProductList();
+    }
+  }
+
+  void navigateToAddProduct(Product product) async {
+    var result = await Navigator.of(context)
+        .push(MaterialPageRoute(builder: (_) => AddingProduct(product)));
+    if (result == true) {
+      updateProductList();
+    }
   }
 }
