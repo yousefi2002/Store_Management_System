@@ -37,8 +37,10 @@ dependencies:
   path_provider:
   animated_text_kit:
   flutter_spinkit:
-  # The following adds the Cupertino Icons font to your application.
-  # Use with the CupertinoIcons class for iOS style icons.
+  delightful_toast:
+  multi_select_flutter: ^4.1.3
+  dropdown_search: ^5.0.2
+
   cupertino_icons: ^1.0.6
 
 dev_dependencies:
