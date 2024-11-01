@@ -28,15 +28,15 @@ class _AddingProductState extends State<AddingProduct> {
           return const ToastCard(
             color: Colors.red,
             title: Text(
-              'Pleas fill out all fields',
-            style: TextStyle(color: Colors.white),
+              'لطفا تمام گزینه ها را پر کنید',
+              style: TextStyle(color: Colors.white),
             ),
           );
         },
         position: DelightSnackbarPosition.top,
         autoDismiss: true,
         snackbarDuration: Durations.extralong4,
-        ).show(
+      ).show(
         context,
       );
       return;
@@ -52,15 +52,14 @@ class _AddingProductState extends State<AddingProduct> {
     if (result != 0) {
       ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
         backgroundColor: Colors.grey,
-        content: Text('Data saved successfully',
-            style: TextStyle(color: Colors.black)),
+        content: Text('اطلاعات ثبت شد', style: TextStyle(color: Colors.black)),
       ));
       productNameController.clear();
     } else {
       ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
         backgroundColor: Colors.red,
-        content:
-            Text('Failed to save data', style: TextStyle(color: Colors.white)),
+        content: Text('متاسفنه اطلاعات ثبت نشد',
+            style: TextStyle(color: Colors.white)),
       ));
       return;
     }
@@ -74,7 +73,7 @@ class _AddingProductState extends State<AddingProduct> {
       appBar: AppBar(
         foregroundColor: Colors.white,
         backgroundColor: Colors.teal,
-        title: const Text('Add Product'),
+        title: const Text('اضافه کردن اجناس'),
       ),
       backgroundColor: Colors.white,
       body: Stack(
@@ -107,6 +106,9 @@ class _AddingProductState extends State<AddingProduct> {
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
                     TextField(
+                      style: TextStyle(
+                        color: Colors.white,
+                      ),
                       controller: productNameController,
                       decoration: InputDecoration(
                         focusedBorder: OutlineInputBorder(
@@ -126,7 +128,7 @@ class _AddingProductState extends State<AddingProduct> {
                           Icons.person_add_alt_1,
                           color: Colors.white,
                         ),
-                        label: const Text('Product Name'),
+                        label: const Text('اسم جنس'),
                         border: OutlineInputBorder(
                           borderRadius: BorderRadius.circular(25),
                         ),
@@ -143,7 +145,7 @@ class _AddingProductState extends State<AddingProduct> {
                     const SizedBox(
                       height: 15,
                     ),
-                    ElevatedButton(
+                    ElevatedButton.icon(
                       style: ElevatedButton.styleFrom(
                         backgroundColor: Colors.white,
                         foregroundColor: Colors.black,
@@ -151,18 +153,14 @@ class _AddingProductState extends State<AddingProduct> {
                       onPressed: () {
                         saveProduct();
                       },
-                      child: const Row(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          Icon(
-                            Icons.save,
-                          ),
-                          SizedBox(
-                            width: 15,
-                          ),
-                          Text('Save'),
-                        ],
+                      label: Text(
+                        'ثبت',
+                        style: TextStyle(
+                          fontSize: 21,
+                          fontWeight: FontWeight.bold,
+                        ),
                       ),
+                      icon: Icon(Icons.save),
                     ),
                   ],
                 ),

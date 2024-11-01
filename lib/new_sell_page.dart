@@ -7,11 +7,13 @@ import 'model_classes/user.dart';
 
 class NewSellPage extends StatefulWidget {
   final Sell sell;
-  const NewSellPage(this.sell, {super.key,});
+  const NewSellPage(
+    this.sell, {
+    super.key,
+  });
 
   @override
-  _NewSellPageState createState() =>
-      _NewSellPageState(this.sell,);
+  _NewSellPageState createState() => _NewSellPageState(this.sell);
 }
 
 class _NewSellPageState extends State<NewSellPage> {
@@ -23,7 +25,6 @@ class _NewSellPageState extends State<NewSellPage> {
   TextEditingController priceController = TextEditingController();
 
   // State variables
-  // int count = 0;
   DateTime now = DateTime.now();
   double? _amount;
   String? _selectedDate;
@@ -31,6 +32,8 @@ class _NewSellPageState extends State<NewSellPage> {
   Sell sell;
   User? selectedUser;
   Product? selectedProduct;
+  String sellerWarning = 'لطفا در بخش فروشنده ها, اشخاص مورد نظر خود را اضافه نمایید.';
+  String productWarning = 'لطفا در بخش اجناس, اجناس مورد نظر خود را اضافه نمایید.';
 
   // Dropdown options
   List<Product> productName = [];
@@ -43,11 +46,13 @@ class _NewSellPageState extends State<NewSellPage> {
     updateUsersList();
     _updateDateTime();
   }
+
   void _updateDateTime() {
     setState(() {
       _selectedDate = '${now.year}-${now.month}-${now.day}';
     });
   }
+
   Future<void> _selectDate(BuildContext context) async {
     final DateTime? picked = await showDatePicker(
       context: context,
@@ -55,7 +60,8 @@ class _NewSellPageState extends State<NewSellPage> {
       firstDate: DateTime(2000),
       lastDate: DateTime(2100),
     );
-    if (picked != null && "${picked.year}-${picked.month}-${picked.day}" != _selectedDate) {
+    if (picked != null &&
+        "${picked.year}-${picked.month}-${picked.day}" != _selectedDate) {
       setState(() {
         _selectedDate = '${picked.year}-${picked.month}-${picked.day}';
       });
@@ -63,14 +69,21 @@ class _NewSellPageState extends State<NewSellPage> {
   }
 
   void saveInput() async {
-    if (selectedProduct == null || _amount == null || _price == null || selectedUser == null) {
+    if (selectedProduct == null ||
+        _amount == null ||
+        _price == null ||
+        selectedUser == null) {
       ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
         backgroundColor: Colors.red,
-        content: Text('Please fill out all fields', style: TextStyle(color: Colors.white)),
+        content: Text(
+            'لطفا تمام گزینه ها را پر کنید'
+            '',
+            style: TextStyle(color: Colors.white)),
       ));
       return;
     }
-  sell = Sell(_selectedDate.toString(), selectedProduct?.productName, _amount, _price, selectedUser?.userName);
+    sell = Sell(_selectedDate.toString(), selectedProduct?.productName, _amount,
+        _price, selectedUser?.userName);
     int result;
     if (sell.id != null) {
       result = await databaseHelper.updateSell(sell);
@@ -81,19 +94,18 @@ class _NewSellPageState extends State<NewSellPage> {
     if (result != 0) {
       ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
         backgroundColor: Colors.grey,
-        content: Text('Data saved successfully', style: TextStyle(color: Colors.black)),
+        content: Text('اطلاعات ثبت شد', style: TextStyle(color: Colors.black)),
       ));
     } else {
       ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
         backgroundColor: Colors.red,
-        content: Text('Failed to save data', style: TextStyle(color: Colors.white)),
+        content: Text('متاسفانه اطلاعات ثبت نشد',
+            style: TextStyle(color: Colors.white)),
       ));
       return;
     }
-
     Navigator.pop(context, true);
   }
-
 
   @override
   Widget build(BuildContext context) {
@@ -101,7 +113,7 @@ class _NewSellPageState extends State<NewSellPage> {
       appBar: AppBar(
         foregroundColor: Colors.white,
         backgroundColor: Colors.teal[300],
-        title: Text('Inputting'),
+        title: Text('فروش'),
       ),
       body: Stack(
         children: [
@@ -125,17 +137,22 @@ class _NewSellPageState extends State<NewSellPage> {
                       Row(
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
-                          Text(
-                            _selectedDate!,
-                            style: TextStyle(fontSize: 20, color: Colors.white),
+                          Expanded(
+                            child: Text(
+                              _selectedDate!,
+                              style:
+                                  TextStyle(fontSize: 20, color: Colors.white),
+                            ),
                           ),
                           Expanded(
                             child: TextButton(
                               onPressed: () => _selectDate(context),
                               child: Text(
-                                'Choose Date',
+                                'انتخاب تاریخ',
                                 style: TextStyle(
-                                color: Colors.orange),
+                                    color: Colors.orange[700],
+                                    fontSize: 21,
+                                    fontWeight: FontWeight.bold),
                               ),
                             ),
                           ),
@@ -145,42 +162,53 @@ class _NewSellPageState extends State<NewSellPage> {
                         height: 10,
                       ),
                       // Name Dropdown
-                      DropdownButtonFormField<Product>(
-                        dropdownColor: Colors.teal[200],
-                        iconEnabledColor: Colors.white,
-                        decoration: InputDecoration(
-                          focusedBorder: OutlineInputBorder(
-                            borderSide: BorderSide(color: Colors.white,),
-                            borderRadius: BorderRadius.circular(25),
-                          ),
-                          enabledBorder: OutlineInputBorder(
-                            borderSide: BorderSide(color: Colors.white,),
-                            borderRadius: BorderRadius.circular(25),
-                          ),
-                          prefixIcon: Icon(Icons.production_quantity_limits, color: Colors.white,),
-                          border: OutlineInputBorder(
-                          ),
-                        ),
-                        hint: Text(
-                          'Product',
-                          style: TextStyle(color: Colors.white),
-                        ),
-                        borderRadius: BorderRadius.circular(25),
-                        value: selectedProduct,
-                        style: TextStyle(color: Colors.white),
-                        items: productName.map((Product name) {
-                          return DropdownMenuItem<Product>(
-                            value: name,
-                            child: Text(name.productName),
-                          );
-                        }).toList(),
-                        onChanged: (Product? newValue) {
-                          setState(() {
-                            selectedProduct= newValue!;
-                          });
+                      GestureDetector(
+                        onTap: () {
+                          notify(productWarning, productName);
                         },
+                        child: DropdownButtonFormField<Product>(
+                          dropdownColor: Colors.teal[200],
+                          iconEnabledColor: Colors.white,
+                          decoration: InputDecoration(
+                            focusedBorder: OutlineInputBorder(
+                              borderSide: BorderSide(
+                                color: Colors.white,
+                              ),
+                              borderRadius: BorderRadius.circular(25),
+                            ),
+                            enabledBorder: OutlineInputBorder(
+                              borderSide: BorderSide(
+                                color: Colors.white,
+                              ),
+                              borderRadius: BorderRadius.circular(25),
+                            ),
+                            prefixIcon: Icon(
+                              Icons.production_quantity_limits,
+                              color: Colors.white,
+                            ),
+                            border: OutlineInputBorder(),
+                          ),
+                          hint: Text(
+                            'جنس',
+                            style: TextStyle(color: Colors.white),
+                          ),
+                          borderRadius: BorderRadius.circular(25),
+                          value: selectedProduct,
+                          style: TextStyle(color: Colors.white),
+                          items: productName.map((Product name) {
+                            return DropdownMenuItem<Product>(
+                              value: name,
+                              child: Text(name.productName),
+                            );
+                          }).toList(),
+                          onChanged: (Product? newValue) {
+                            setState(() {
+                              selectedProduct = newValue!;
+                            });
+                          },
+                        ),
                       ),
-                      SizedBox(
+                      const SizedBox(
                         height: 10,
                       ),
                       // Text Input Field
@@ -189,25 +217,30 @@ class _NewSellPageState extends State<NewSellPage> {
                         style: TextStyle(color: Colors.white),
                         decoration: InputDecoration(
                             focusedBorder: OutlineInputBorder(
-                              borderSide: BorderSide(color: Colors.white,),
+                              borderSide: BorderSide(
+                                color: Colors.white,
+                              ),
                               borderRadius: BorderRadius.circular(25),
                             ),
                             enabledBorder: OutlineInputBorder(
-                              borderSide: BorderSide(color: Colors.white,),
+                              borderSide: BorderSide(
+                                color: Colors.white,
+                              ),
                               borderRadius: BorderRadius.circular(25),
                             ),
-                          prefixIcon: Icon(Icons.numbers, color: Colors.white,),
-                            border: OutlineInputBorder(
+                            prefixIcon: Icon(
+                              Icons.numbers,
+                              color: Colors.white,
                             ),
+                            border: OutlineInputBorder(),
                             label: Text(
-                              "Amount",
+                              "مقدار",
                               style: TextStyle(color: Colors.white),
                             )),
                         keyboardType: TextInputType.number,
                         onChanged: (value) {
                           setState(() {
                             _amount = double.tryParse(value);
-
                           });
                         },
                       ),
@@ -220,25 +253,31 @@ class _NewSellPageState extends State<NewSellPage> {
                         style: TextStyle(color: Colors.white),
                         decoration: InputDecoration(
                             focusedBorder: OutlineInputBorder(
-                              borderSide: BorderSide(color: Colors.white,),
+                              borderSide: BorderSide(
+                                color: Colors.white,
+                              ),
                               borderRadius: BorderRadius.circular(25),
                             ),
                             enabledBorder: OutlineInputBorder(
-                              borderSide: BorderSide(color: Colors.white,),
+                              borderSide: BorderSide(
+                                color: Colors.white,
+                              ),
                               borderRadius: BorderRadius.circular(25),
                             ),
-                            prefixIcon: Icon(Icons.price_check, color: Colors.white,),
-                            border: OutlineInputBorder(
+                            prefixIcon: Icon(
+                              Icons.price_check,
+                              color: Colors.white,
                             ),
+                            border: OutlineInputBorder(),
                             label: Text(
-                              'Price',
+                              'قیمت',
                               style: TextStyle(color: Colors.white),
                             )),
                         keyboardType: TextInputType.number,
                         onChanged: (value) {
                           setState(() {
                             _price = int.parse(value);
-                            if(_price != null){
+                            if (_price != null) {
                               sell.price = _price!;
                             }
                           });
@@ -248,61 +287,77 @@ class _NewSellPageState extends State<NewSellPage> {
                         height: 10,
                       ),
                       // Username Dropdown
-                      DropdownButtonFormField<User>(
-                        dropdownColor: Colors.teal[200],
-                        iconEnabledColor: Colors.white,
-                        decoration: InputDecoration(
-                          focusedBorder: OutlineInputBorder(
-                            borderSide: BorderSide(color: Colors.white,),
-                            borderRadius: BorderRadius.circular(25),
-
-                          ),
-                          enabledBorder: OutlineInputBorder(
-                            borderSide: BorderSide(color: Colors.white,),
-                            borderRadius: BorderRadius.circular(25),
-                          ),
-                          prefixIcon: Icon(Icons.person, color: Colors.white,),
-                          border: OutlineInputBorder(
-                            borderSide: BorderSide(color: Colors.white),
-                          ),
-                        ),
-                        hint: Text(
-                          'Seller',
-                          style: TextStyle(color: Colors.white),
-                        ),
-                        value: selectedUser,
-                        style: TextStyle(color: Colors.white),
-                        items: usernames.map((User user) {
-                          return DropdownMenuItem<User>(
-                            value: user,
-                            child: Text(user.userName),
-                          );
-                        }).toList(),
-                        onChanged: (User? newValue) {
-                          setState(() {
-                            selectedUser = newValue;
-                          });
+                      GestureDetector(
+                        onTap: (){
+                          notify(sellerWarning, usernames);
                         },
+                        child: DropdownButtonFormField<User>(
+                          dropdownColor: Colors.teal[200],
+                          iconEnabledColor: Colors.white,
+                          decoration: InputDecoration(
+                            focusedBorder: OutlineInputBorder(
+                              borderSide: BorderSide(
+                                color: Colors.white,
+                              ),
+                              borderRadius: BorderRadius.circular(25),
+                            ),
+                            enabledBorder: OutlineInputBorder(
+                              borderSide: BorderSide(
+                                color: Colors.white,
+                              ),
+                              borderRadius: BorderRadius.circular(25),
+                            ),
+                            prefixIcon: Icon(
+                              Icons.person,
+                              color: Colors.white,
+                            ),
+                            border: OutlineInputBorder(
+                              borderSide: BorderSide(color: Colors.white),
+                            ),
+                          ),
+                          hint: Text(
+                            'فروشنده',
+                            style: TextStyle(color: Colors.white),
+                          ),
+                          value: selectedUser,
+                          style: TextStyle(color: Colors.white),
+                          items: usernames.map((User user) {
+                            return DropdownMenuItem<User>(
+                              value: user,
+                              child: Text(user.userName),
+                            );
+                          }).toList(),
+                          onChanged: (User? newValue) {
+                            setState(() {
+                              selectedUser = newValue;
+                            });
+                          },
+                        ),
                       ),
 
                       SizedBox(height: 20),
                       // Save Button
-                      ElevatedButton(
-                        style: ElevatedButton.styleFrom(
-                          backgroundColor: Colors.white,
-                          foregroundColor: Colors.black,
+                      Expanded(
+                        child: ElevatedButton(
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: Colors.white,
+                            foregroundColor: Colors.black,
+                          ),
+                          onPressed: () {
+                            if (_formKey.currentState!.validate()) {}
+                            saveInput();
+                            amountController.clear();
+                            priceController.clear();
+                            setState(() {
+                              selectedProduct = null;
+                            });
+                          },
+                          child: const Text(
+                            'ثبت',
+                            style: TextStyle(
+                                fontWeight: FontWeight.bold, fontSize: 20),
+                          ),
                         ),
-                        onPressed: () {
-                          if (_formKey.currentState!.validate()) {
-                          }
-                          saveInput();
-                          amountController.clear();
-                          priceController.clear();
-                          setState(() {
-                            selectedProduct = null;
-                          });
-                        },
-                        child: const Text('Save'),
                       ),
                     ],
                   ),
@@ -314,6 +369,7 @@ class _NewSellPageState extends State<NewSellPage> {
       ),
     );
   }
+
   void updateProductList() {
     Future<Database> dbFuture = databaseHelper.initDatabase();
     dbFuture.then((database) {
@@ -324,6 +380,44 @@ class _NewSellPageState extends State<NewSellPage> {
         });
       });
     });
+  }
+
+  void notify(String text, List listName ) {
+    if (listName.isEmpty) {
+      showDialog(
+        context: context,
+          builder: (context) {
+            return AlertDialog(
+              backgroundColor: Colors.teal[300],
+              title: const Text('هشدار!',
+                textDirection: TextDirection.rtl,
+                textAlign: TextAlign.center,
+                style: TextStyle(
+                  color: Colors.white,
+                ),),
+              content:  Text(text,
+              textDirection: TextDirection.rtl,
+              textAlign: TextAlign.center,
+              style: const TextStyle(
+                color: Colors.white,
+              ),),
+              actions: [
+                TextButton(
+                  onPressed: () {
+                    Navigator.of(context).pop();
+                  },
+                  child: const Text(
+                    'بستن',
+                    style: TextStyle(
+                      fontWeight: FontWeight.bold,
+                      color: Colors.orange,
+                    ),
+                  ),
+                ),
+              ],
+            );
+          });
+    }
   }
 
   void updateUsersList() {

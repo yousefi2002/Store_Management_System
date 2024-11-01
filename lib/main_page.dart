@@ -50,16 +50,16 @@ class _MainPageState extends State<MainPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      drawer: MyDrawer(),
+      drawer: const MyDrawer(),
       appBar: AppBar(
         foregroundColor: Colors.white,
         backgroundColor: Colors.teal[500],
-        title: Text('Store Management'),
+        title: Text('مدریت فروشگاه'),
       ),
       body: sales.isEmpty
           ? Center(
               child: Text(
-                'Nothing sold yet',
+                'چیزی فروخته نشده',
                 style: TextStyle(fontSize: 50),
               ),
             )
@@ -84,7 +84,7 @@ class _MainPageState extends State<MainPage> {
                             mainPageDate,
                             style: TextStyle(fontSize: 20),
                           )),
-                          Divider(),
+                          const Divider(),
                           Row(
                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
                             children: [
@@ -93,7 +93,7 @@ class _MainPageState extends State<MainPage> {
                                 style: TextStyle(fontSize: 20),
                               ),
                               Text(
-                                'کل فروش',
+                                'تعداد فروش',
                                 style: TextStyle(fontSize: 20),
                               ),
                             ],
@@ -159,7 +159,7 @@ class _MainPageState extends State<MainPage> {
             backgroundColor: Colors.teal[300],
             foregroundColor: Colors.white,
             child: Icon(Icons.attach_money),
-            label: 'Sell',
+            label: 'فروش',
             labelBackgroundColor: Colors.teal[300],
             labelStyle:
                 TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
@@ -171,7 +171,7 @@ class _MainPageState extends State<MainPage> {
             backgroundColor: Colors.teal[300],
             foregroundColor: Colors.white,
             child: const Icon(Icons.shopping_cart),
-            label: 'Buy',
+            label: 'خرجی',
             labelBackgroundColor: Colors.teal[300],
             labelStyle:
                 const TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
@@ -206,8 +206,8 @@ class _MainPageState extends State<MainPage> {
       ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
           backgroundColor: Colors.red,
           content: Text(
-            'Sold item got deleted',
-            style: TextStyle(color: Colors.black),
+            'گزینه مورد نظر حذف شد',
+            style: TextStyle(color: Colors.white),
           )));
       updateSellList();
       _getTotalSalesOfToday();

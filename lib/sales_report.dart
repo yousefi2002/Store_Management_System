@@ -38,177 +38,176 @@ class _SalesReportState extends State<SalesReport> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: Padding(
-        padding: const EdgeInsets.all(16.0),
-        child: Column(
-          children: [
-            ElevatedButton(
-              style: ElevatedButton.styleFrom(
-                backgroundColor: Colors.teal[300],
-                foregroundColor: Colors.white,
+      body: SingleChildScrollView(
+        child: Padding(
+          padding: const EdgeInsets.all(16.0),
+          child: Column(
+            children: [
+              ElevatedButton(
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: Colors.teal[300],
+                  foregroundColor: Colors.white,
+                ),
+                onPressed: () async {
+                  final picked = await showDateRangePicker(
+                    context: context,
+                    firstDate: DateTime(2000),
+                    lastDate: DateTime.now(),
+                  );
+                  if (picked != null) {
+                    setState(() {
+                      startDate =
+                          "${picked.start.year}-${picked.start.month}-${picked.start.day}";
+                      endDate =
+                          "${picked.end.year}-${picked.end.month}-${picked.end.day}";
+                    });
+                  }
+                },
+                child: const Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Icon(Icons.date_range),
+                    Text('انتخاب تاریخ', style: TextStyle(fontWeight: FontWeight.bold,),),
+                  ],
+                ),
               ),
-              onPressed: () async {
-                final picked = await showDateRangePicker(
-                  context: context,
-                  firstDate: DateTime(2000),
-                  lastDate: DateTime.now(),
-                );
-                if (picked != null) {
+              if (startDate != null && endDate != null)
+                Text('Selected: ${startDate!} to ${endDate!}'),
+              // Product Dropdown
+              const SizedBox(height: 10),
+              DropdownSearch<Product>.multiSelection(
+                items: _product,
+                selectedItems: _selectedProduct,
+                dropdownBuilder: _customProductDropDown,
+                compareFn: (Product a, Product b) => a.id == b.id,
+                popupProps: PopupPropsMultiSelection.menu(
+                  showSelectedItems: true,
+                  showSearchBox: true,
+                  itemBuilder: (context, product, isSelected) {
+                    return ListTile(
+                      title: Text(product.productName),
+                    );
+                  },
+                ),
+                onChanged: (List<Product> value) {
                   setState(() {
-                    startDate =
-                        "${picked.start.year}-${picked.start.month}-${picked.start.day}";
-                    endDate =
-                        "${picked.end.year}-${picked.end.month}-${picked.end.day}";
+                    _selectedProduct = value;
                   });
-                }
-              },
-              child: const Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Icon(Icons.date_range),
-                  Text('Pick Date Range'),
-                ],
-              ),
-            ),
-            if (startDate != null && endDate != null)
-              Text('Selected: ${startDate!} to ${endDate!}'),
-            // Product Dropdown
-            const SizedBox(height: 10),
-            DropdownSearch<Product>.multiSelection(
-              items: _product,
-              selectedItems: _selectedProduct,
-              dropdownBuilder: _customProductDropDown,
-              compareFn: (Product a, Product b) => a.id == b.id,
-              popupProps: PopupPropsMultiSelection.menu(
-                showSelectedItems: true,
-                showSearchBox: true,
-                itemBuilder: (context, product, isSelected) {
-                  return ListTile(
-                    title: Text(product.productName),
-                  );
                 },
-              ),
-              onChanged: (List<Product> value) {
-                setState(() {
-                  _selectedProduct = value;
-                });
-              },
-              clearButtonProps: const ClearButtonProps(isVisible: true),
-              dropdownButtonProps: const DropdownButtonProps(isVisible: true),
-              dropdownDecoratorProps: DropDownDecoratorProps(
-                dropdownSearchDecoration: InputDecoration(
-                  focusedBorder: OutlineInputBorder(
-                    borderSide:
-                        BorderSide(color: Colors.teal[300]!, width: 1.5),
-                    borderRadius: BorderRadius.circular(25),
-                  ),
-                  enabledBorder: OutlineInputBorder(
-                    borderSide:
-                        BorderSide(color: Colors.teal[300]!, width: 1.5),
-                    borderRadius: BorderRadius.circular(25),
-                  ),
-                  labelText: "Select Product",
-                  hintText: "Choose Product",
-                  border: OutlineInputBorder(),
-                ),
-              ),
-            ),
-
-            const SizedBox(height: 10),
-            // User Dropdown
-            DropdownSearch<User>.multiSelection(
-              items: _user,
-              selectedItems: _selectedUser,
-              dropdownBuilder: _customUserDropDown,
-              compareFn: (User a, User b) => a.id == b.id,
-              popupProps: PopupPropsMultiSelection.menu(
-                showSelectedItems: true,
-                showSearchBox: true,
-                itemBuilder: (context, user, isSelected) {
-                  return ListTile(
-                    title: Text(user.userName),
-                  );
-                },
-              ),
-              onChanged: (List<User> value) {
-                setState(() {
-                  _selectedUser = value;
-                });
-              },
-              clearButtonProps: const ClearButtonProps(
-                isVisible: true,
-              ),
-              dropdownButtonProps: const DropdownButtonProps(isVisible: true),
-              dropdownDecoratorProps: DropDownDecoratorProps(
-                dropdownSearchDecoration: InputDecoration(
-                  focusedBorder: OutlineInputBorder(
-                    borderSide:
-                        BorderSide(color: Colors.teal[300]!, width: 1.5),
-                    borderRadius: BorderRadius.circular(25),
-                  ),
-                  enabledBorder: OutlineInputBorder(
-                    borderSide:
-                        BorderSide(color: Colors.teal[300]!, width: 1.5),
-                    borderRadius: BorderRadius.circular(25),
-                  ),
-                  labelText: "Select User",
-                  hintText: "Choose User",
-                  border: OutlineInputBorder(),
-                ),
-              ),
-            ),
-
-            SizedBox(height: 10),
-            // Search Button
-            ElevatedButton(
-              style: ElevatedButton.styleFrom(
-                backgroundColor: Colors.teal[300],
-                foregroundColor: Colors.white,
-              ),
-              onPressed: () {
-                if (startDate != null &&
-                    endDate != null &&
-                    _selectedUser.isNotEmpty &&
-                    _selectedProduct.isNotEmpty) {
-                  updateReportList();
-                }
-              },
-              child: const Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Icon(Icons.search_rounded),
-                  Text('Search'),
-                ],
-              ),
-            ),
-            const Divider(),
-            _report.isEmpty
-                ? const Center(
-                    child: Text(
-                      'No Record Found',
-                      style: TextStyle(fontSize: 25),
+                clearButtonProps: const ClearButtonProps(isVisible: true),
+                dropdownButtonProps: const DropdownButtonProps(isVisible: true),
+                dropdownDecoratorProps: DropDownDecoratorProps(
+                  dropdownSearchDecoration: InputDecoration(
+                    focusedBorder: OutlineInputBorder(
+                      borderSide:
+                          BorderSide(color: Colors.teal[300]!, width: 1.5),
+                      borderRadius: BorderRadius.circular(25),
                     ),
-                  )
-                : Expanded(
-                    child: SingleChildScrollView(
-                      scrollDirection: Axis.vertical,
-                      child: SingleChildScrollView(
-                        scrollDirection: Axis.horizontal,
-                        child: DataTable(
-                            border: TableBorder.all(color: Colors.teal),
-                            columns: const [
-                              DataColumn(label: Text('No.')),
-                              DataColumn(label: Text('Product Name')),
-                              DataColumn(label: Text('Amount')),
-                              DataColumn(label: Text('Price')),
-                              DataColumn(label: Text('User')),
-                              DataColumn(label: Text('Date')),
-                            ],
-                            rows: _buildRows()),
+                    enabledBorder: OutlineInputBorder(
+                      borderSide:
+                          BorderSide(color: Colors.teal[300]!, width: 1.5),
+                      borderRadius: BorderRadius.circular(25),
+                    ),
+                    labelText: "جنس",
+                    hintText: "انتخاب جنس",
+                    border: OutlineInputBorder(),
+                  ),
+                ),
+              ),
+        
+              const SizedBox(height: 10),
+              // User Dropdown
+              DropdownSearch<User>.multiSelection(
+                items: _user,
+                selectedItems: _selectedUser,
+                dropdownBuilder: _customUserDropDown,
+                compareFn: (User a, User b) => a.id == b.id,
+                popupProps: PopupPropsMultiSelection.menu(
+                  showSelectedItems: true,
+                  showSearchBox: true,
+                  itemBuilder: (context, user, isSelected) {
+                    return ListTile(
+                      title: Text(user.userName),
+                    );
+                  },
+                ),
+                onChanged: (List<User> value) {
+                  setState(() {
+                    _selectedUser = value;
+                  });
+                },
+                clearButtonProps: const ClearButtonProps(
+                  isVisible: true,
+                ),
+                dropdownButtonProps: const DropdownButtonProps(isVisible: true),
+                dropdownDecoratorProps: DropDownDecoratorProps(
+                  dropdownSearchDecoration: InputDecoration(
+                    focusedBorder: OutlineInputBorder(
+                      borderSide:
+                          BorderSide(color: Colors.teal[300]!, width: 1.5),
+                      borderRadius: BorderRadius.circular(25),
+                    ),
+                    enabledBorder: OutlineInputBorder(
+                      borderSide:
+                          BorderSide(color: Colors.teal[300]!, width: 1.5),
+                      borderRadius: BorderRadius.circular(25),
+                    ),
+                    labelText: "فروشنده",
+                    hintText: "انتخاب فروشنده",
+                    border: OutlineInputBorder(),
+                  ),
+                ),
+              ),
+        
+              SizedBox(height: 10),
+              // Search Button
+              ElevatedButton(
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: Colors.teal[300],
+                  foregroundColor: Colors.white,
+                ),
+                onPressed: () {
+                  if (startDate != null &&
+                      endDate != null &&
+                      _selectedUser.isNotEmpty) {
+                    updateReportList();
+                  }
+                },
+                child: const Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Icon(Icons.search_rounded),
+                    Text('جستجو'),
+                  ],
+                ),
+              ),
+              const Divider(),
+              _report.isEmpty
+                  ? const Center(
+                      child: Text(
+                        'اطلاعات یافت نشد',
+                        style: TextStyle(fontSize: 25),
                       ),
+                    )
+                  : SingleChildScrollView(
+                    scrollDirection: Axis.vertical,
+                    child: SingleChildScrollView(
+                      scrollDirection: Axis.horizontal,
+                      child: DataTable(
+                          border: TableBorder.all(color: Colors.teal),
+                          columns: const [
+                            DataColumn(label: Text('شماره')),
+                            DataColumn(label: Text('جنس')),
+                            DataColumn(label: Text('مقدار')),
+                            DataColumn(label: Text('قیمت')),
+                            DataColumn(label: Text('فروشنده')),
+                            DataColumn(label: Text('تاریخ')),
+                          ],
+                          rows: _buildRows()),
                     ),
                   ),
-          ],
+            ],
+          ),
         ),
       ),
     );
@@ -230,7 +229,7 @@ class _SalesReportState extends State<SalesReport> {
   Widget _customProductDropDown(
       BuildContext context, List<Product>? selectedProduct) {
     if (selectedProduct == null || selectedProduct.isEmpty) {
-      return Text('No product Selected');
+      return Text('هیچ جنسی انتخاب نشده');
     }
     return Wrap(
       children: selectedProduct
@@ -252,7 +251,7 @@ class _SalesReportState extends State<SalesReport> {
 
   Widget _customUserDropDown(BuildContext context, List<User>? selectedUser) {
     if (selectedUser == null || selectedUser.isEmpty) {
-      return Text('No User Selected');
+      return Text('هیچ فروشنده ای انتخاب نشده');
     }
     return Wrap(
       children: selectedUser

@@ -47,12 +47,12 @@ class _ExpensesPageState extends State<ExpensesPage> {
       appBar: AppBar(
         backgroundColor: Colors.teal[300],
         foregroundColor: Colors.white,
-        title: const Text('Expenses Page'),
+        title: const Text('خرجی ها'),
       ),
       body: _expensesList.isEmpty
           ? const Center(
               child: Text(
-                'Nothing bought yet',
+                'چیزی خرج نشده',
                 style: TextStyle(fontSize: 45),
               ),
             )
@@ -171,7 +171,7 @@ class _ExpensesPageState extends State<ExpensesPage> {
       ScaffoldMessenger.of(context).showSnackBar(SnackBar(
           backgroundColor: Colors.grey[400],
           content: const Text(
-            'Expense got deleted',
+            'گزینه مورد نظر حذف شد',
             style: TextStyle(color: Colors.black),
           )));
       updateExpensesList();

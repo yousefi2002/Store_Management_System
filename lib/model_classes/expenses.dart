@@ -38,8 +38,8 @@ class Expenses {
   Expenses.fromMapObject(Map<String, dynamic> map) {
     _id = map["id"];
     _date = map["date"];
-    _reasonToSpend = map["reason_to_Spend"];
-    _amountToSpend = map["amount_to_Spend"];
+    _reasonToSpend = map["reason_to_spend"];
+    _amountToSpend = map["amount_to_spend"];
   }
   @override
   String toString() {

@@ -51,12 +51,19 @@ class _ExpensesReportState extends State<ExpensesReport> {
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
                     Icon(Icons.date_range),
-                    Text('Pick Date Range'),
+                    Text(
+                      'انتخاب تاریخ',
+                      style: TextStyle(
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
                   ],
                 ),
               ),
             ),
-            const SizedBox(height: 10,),
+            const SizedBox(
+              height: 10,
+            ),
             if (startDate != null && endDate != null)
               Text('Selected: ${startDate!} to ${endDate!}'),
             const SizedBox(height: 10),
@@ -66,7 +73,7 @@ class _ExpensesReportState extends State<ExpensesReport> {
                 foregroundColor: Colors.white,
               ),
               onPressed: () {
-                if(startDate != null && endDate != null){
+                if (startDate != null && endDate != null) {
                   updateExpensesList();
                 }
               },
@@ -74,7 +81,7 @@ class _ExpensesReportState extends State<ExpensesReport> {
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
                   Icon(Icons.search_rounded),
-                  Text('Search'),
+                  Text('جستجو'),
                 ],
               ),
             ),
@@ -85,7 +92,7 @@ class _ExpensesReportState extends State<ExpensesReport> {
             expensesListOfItems.isEmpty
                 ? const Center(
                     child: Text(
-                      'No Record Found',
+                      'اطلاعات یافت نشد',
                       style: TextStyle(fontSize: 25),
                     ),
                   )
@@ -100,10 +107,10 @@ class _ExpensesReportState extends State<ExpensesReport> {
                             // decoration: ,
                             border: TableBorder.all(color: Colors.teal),
                             columns: [
-                              DataColumn(label: Text('No.')),
-                              DataColumn(label: Text('Reason')),
-                              DataColumn(label: Text('Amount')),
-                              DataColumn(label: Text('Date')),
+                              DataColumn(label: Text('شماره')),
+                              DataColumn(label: Text('دلیل')),
+                              DataColumn(label: Text('قیمت')),
+                              DataColumn(label: Text('تاریخ')),
                             ],
                             rows: _buildRows(),
                           ),
@@ -143,15 +150,3 @@ class _ExpensesReportState extends State<ExpensesReport> {
     });
   }
 }
-
-// child: ListView.builder(
-//   itemCount: count,
-//   itemBuilder: (context, index) {
-//     return ListTile(
-//       title: Text(
-//           '${expensesListOfItems[index].id}--${expensesListOfItems[index].date}'),
-//       subtitle: Text(
-//           '${expensesListOfItems[index].reasonToSpend}--${expensesListOfItems[index].amountToSpend}'),
-//     );
-//   },
-// ),

@@ -26,14 +26,15 @@ class _UserListState extends State<UserList> {
     updateUsersList();
     return Scaffold(
       appBar: AppBar(
-        title: Text('Users'),
+        title: Text('فروشنده ها'),
         backgroundColor: Colors.teal[300],
         foregroundColor: Colors.white,
       ),
       body: addedUsers.isEmpty
           ? const Center(
               child: Text(
-                'No user added',
+                'هیچ فروشنده ای اضافه نشده است',
+                textAlign: TextAlign.center,
                 style: TextStyle(fontSize: 35),
               ),
             )
@@ -43,6 +44,8 @@ class _UserListState extends State<UserList> {
                 return Padding(
                   padding: const EdgeInsets.only(top: 10.0, right: 10, left: 10),
                   child: ListTile(
+                    iconColor: Colors.white,
+                    textColor: Colors.white,
                     tileColor: Colors.teal[300],
                     title: Text(
                         "${addedUsers[index].userName} ${addedUsers[index].userLastName}"),
@@ -86,7 +89,7 @@ class _UserListState extends State<UserList> {
       ScaffoldMessenger.of(context).showSnackBar(SnackBar(
           backgroundColor: Colors.grey[400],
           content: const Text(
-            'Sold item got deleted',
+            'فرهشنده مورد نظر حذف شد',
             style: TextStyle(color: Colors.black),
           )));
       updateUsersList();

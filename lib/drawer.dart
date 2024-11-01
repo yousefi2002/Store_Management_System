@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:store_ms/expenses_page.dart';
-import 'package:store_ms/expenses_report.dart';
+import 'package:store_ms/loan_borrow/loan_borrow_page.dart';
 import 'package:store_ms/main_page.dart';
 import 'package:store_ms/product_list.dart';
 import 'package:store_ms/report_page.dart';
@@ -17,49 +16,56 @@ class DrawerContent {
 }
 
 class MyDrawer extends StatelessWidget {
-  MyDrawer({super.key});
+  const MyDrawer({super.key});
 
   @override
   Widget build(BuildContext context) {
     final List<DrawerContent> items = [
-      DrawerContent('Setting', Icons.settings, onTap: () {
+      DrawerContent('فروشنده ها', Icons.person, onTap: () {
+        Navigator.of(context).push(
+          MaterialPageRoute(
+            builder: (context) => const UserList(),
+          ),
+        );
+      }),
+      DrawerContent('اجناس', Icons.production_quantity_limits, onTap: () {
+        Navigator.of(context).push(
+          MaterialPageRoute(
+            builder: (context) => const ProductList(),
+          ),
+        );
+      }),
+      DrawerContent('گزارش', Icons.report_gmailerrorred, onTap: () {
+        Navigator.of(context).push(
+          MaterialPageRoute(
+            builder: (context) => const ReportPage(),
+          ),
+        );
+      }),
+      DrawerContent('قرضه', Icons.monetization_on_outlined, onTap: () {
+        Navigator.of(context).push(
+          MaterialPageRoute(
+            builder: (context) => const LoanBorrowPage(),
+          ),
+        );
+      }),
+      DrawerContent('Backup به زودی...', Icons.backup_outlined, onTap: () {
+        Navigator.of(context).push(
+          MaterialPageRoute(
+            builder: (context) => const MainPage(),
+          ),
+        );
+      }),
+      DrawerContent('تنظیمات', Icons.settings, onTap: () {
         showDialog(
           context: context,
-          builder: (context) => SettingsDialog(),
+          builder: (context) => const SettingsDialog(),
         );
       }),
-      DrawerContent('Users', Icons.person, onTap: () {
-        Navigator.of(context).push(
-          MaterialPageRoute(
-            builder: (context) => UserList(),
-          ),
-        );
-      }),
-      DrawerContent('Product', Icons.production_quantity_limits, onTap: () {
-        Navigator.of(context).push(
-          MaterialPageRoute(
-            builder: (context) => ProductList(),
-          ),
-        );
-      }),
-      DrawerContent('Report', Icons.report_gmailerrorred, onTap: () {
-        Navigator.of(context).push(
-          MaterialPageRoute(
-            builder: (context) => ReportPage(),
-          ),
-        );
-      }),
-      DrawerContent('Buck Up', Icons.backup_outlined, onTap: () {
-        Navigator.of(context).push(
-          MaterialPageRoute(
-            builder: (context) => MainPage(),
-          ),
-        );
-      }),
-      DrawerContent('About', Icons.account_box_outlined, onTap: () {
+      DrawerContent('درباره', Icons.account_box_outlined, onTap: () {
         showDialog(
           context: context,
-          builder: (context) => AboutPage(),
+          builder: (context) => const AboutPage(),
         );
       },),
     ];
@@ -80,32 +86,32 @@ class MyDrawer extends StatelessWidget {
             const Divider(),
             Expanded(
               child: ListView.builder(
-                  itemCount: items.length,
-                  itemBuilder: (context, index) {
-                    return Padding(
-                      padding: EdgeInsets.only(top: 5, right: 5, left: 5),
-                      child: ListTile(
-                        shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(25)),
-                        tileColor: Colors.white,
-                        leading: Icon(
-                          items[index].icon,
-                          color: Colors.orange[300],
+                itemCount: items.length,
+                itemBuilder: (context, index) {
+                  return Padding(
+                    padding: const EdgeInsets.only(top: 5, right: 5, left: 5),
+                    child: ListTile(
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(25),
+                      ),
+                      tileColor: Colors.white,
+                      leading: Icon(
+                        items[index].icon,
+                        color: Colors.orange[300],
                         ),
                         horizontalTitleGap: 40,
                         onTap: () {
                           items[index].onTap();
-                          // Navigator.of(context).push(
-                          //   MaterialPageRoute(builder: (context) =>  items[index].onTap)
-                          // );
                         },
+                        minTileHeight: 35,
                         title: Text(
                           items[index].title,
-                          style: TextStyle(fontSize: 20),
+                          style: const TextStyle(fontSize: 20),
                         ),
                       ),
                     );
-                  }),
+                  }
+                ),
             ),
           ],
         ),

@@ -10,8 +10,7 @@ class AddingUsers extends StatefulWidget {
   AddingUsers(this.user, {super.key});
 
   @override
-  State<AddingUsers> createState() =>
-      _AddingUsersState(this.user);
+  State<AddingUsers> createState() => _AddingUsersState(this.user);
 }
 
 class _AddingUsersState extends State<AddingUsers> {
@@ -27,18 +26,21 @@ class _AddingUsersState extends State<AddingUsers> {
   String? _userLastName;
   String? _userPhoneNumber;
 
-
   void saveUser() async {
-    if (userNameController.text.isEmpty || lastNameController.text.isEmpty || phoneNumberController.text.isEmpty) {
+    if (userNameController.text.isEmpty ||
+        lastNameController.text.isEmpty ||
+        phoneNumberController.text.isEmpty) {
       DelightToastBar(
-          builder: (BuildContext context) {
-            return ToastCard(
-                color: Colors.red,
-                title: Text('Pleas fill out all fields', style: TextStyle(color: Colors.white),));
-          },
-          position: DelightSnackbarPosition.top,
-          autoDismiss: true,
-          snackbarDuration: Durations.extralong4
+        builder: (BuildContext context) {
+          return ToastCard(
+              color: Colors.red,
+              title: Text(
+                'لطفا تمام گزینه ها را پر کنید',
+                style: TextStyle(color: Colors.white),
+              ));
+        },
+        position: DelightSnackbarPosition.top,
+        autoDismiss: true,
       ).show(
         context,
       );
@@ -55,7 +57,7 @@ class _AddingUsersState extends State<AddingUsers> {
     if (result != 0) {
       ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
         backgroundColor: Colors.grey,
-        content: Text('Data saved successfully', style: TextStyle(color: Colors.black)),
+        content: Text('اطلاعات ثبت شد', style: TextStyle(color: Colors.black)),
       ));
       userNameController.clear();
       lastNameController.clear();
@@ -63,12 +65,13 @@ class _AddingUsersState extends State<AddingUsers> {
     } else {
       ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
         backgroundColor: Colors.red,
-        content: Text('Failed to save data', style: TextStyle(color: Colors.white)),
+        content: Text('متاسفانه اطلاعات ثبت نشد',
+            style: TextStyle(color: Colors.white)),
       ));
       return;
     }
 
-    Navigator.pop(context,true);
+    Navigator.pop(context, true);
   }
 
   @override
@@ -77,7 +80,7 @@ class _AddingUsersState extends State<AddingUsers> {
       appBar: AppBar(
         foregroundColor: Colors.white,
         backgroundColor: Colors.teal,
-        title: Text('Add User'),
+        title: Text('اضافه کردن فروشنده ها'),
       ),
       backgroundColor: Colors.white,
       body: Stack(
@@ -110,6 +113,9 @@ class _AddingUsersState extends State<AddingUsers> {
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
                     TextField(
+                      style: TextStyle(
+                        color: Colors.white,
+                      ),
                       controller: userNameController,
                       decoration: InputDecoration(
                         focusedBorder: OutlineInputBorder(
@@ -129,19 +135,24 @@ class _AddingUsersState extends State<AddingUsers> {
                           Icons.person,
                           color: Colors.white,
                         ),
-                        label: Text('Name'),
+                        label: Text('نام'),
                         border: OutlineInputBorder(
                           borderRadius: BorderRadius.circular(25),
                         ),
                       ),
-                      onChanged: (value){
+                      onChanged: (value) {
                         setState(() {
                           _userName = value;
                         });
                       },
                     ),
-                    SizedBox(height: 15,),
+                    SizedBox(
+                      height: 15,
+                    ),
                     TextField(
+                      style: TextStyle(
+                        color: Colors.white,
+                      ),
                       controller: lastNameController,
                       decoration: InputDecoration(
                         focusedBorder: OutlineInputBorder(
@@ -161,12 +172,12 @@ class _AddingUsersState extends State<AddingUsers> {
                           Icons.person_add_alt_1,
                           color: Colors.white,
                         ),
-                        label: Text('Last Name'),
+                        label: Text('تخلص'),
                         border: OutlineInputBorder(
                           borderRadius: BorderRadius.circular(25),
                         ),
                       ),
-                      onChanged: (value){
+                      onChanged: (value) {
                         setState(() {
                           _userLastName = value;
                         });
@@ -176,6 +187,9 @@ class _AddingUsersState extends State<AddingUsers> {
                       height: 15,
                     ),
                     TextField(
+                      style: TextStyle(
+                        color: Colors.white,
+                      ),
                       controller: phoneNumberController,
                       decoration: InputDecoration(
                         focusedBorder: OutlineInputBorder(
@@ -195,12 +209,13 @@ class _AddingUsersState extends State<AddingUsers> {
                           Icons.phone_android,
                           color: Colors.white,
                         ),
-                        label: Text('Phone Number'),
+                        label: Text('شماره تلفن'),
                         border: OutlineInputBorder(
                           borderRadius: BorderRadius.circular(25),
                         ),
                       ),
-                      onChanged: (value){
+                      keyboardType: TextInputType.number,
+                      onChanged: (value) {
                         setState(() {
                           _userPhoneNumber = value;
                         });
@@ -209,25 +224,19 @@ class _AddingUsersState extends State<AddingUsers> {
                     SizedBox(
                       height: 15,
                     ),
-                    ElevatedButton(
+                    ElevatedButton.icon(
                       style: ElevatedButton.styleFrom(
                         backgroundColor: Colors.white,
                         foregroundColor: Colors.black,
                       ),
-                      onPressed: (){
-                        saveUser();},
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          Icon(
-                            Icons.save,
-                          ),
-                          SizedBox(
-                            width: 15,
-                          ),
-                          Text('Save'),
-                        ],
+                      onPressed: () {
+                        saveUser();
+                      },
+                      label: Text(
+                        'ثبت',
+                        style: TextStyle(fontSize: 21),
                       ),
+                      icon: Icon(Icons.save),
                     ),
                   ],
                 ),

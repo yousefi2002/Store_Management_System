@@ -10,8 +10,7 @@ class AddingExpenses extends StatefulWidget {
   const AddingExpenses(this.expenses, {super.key});
 
   @override
-  State<AddingExpenses> createState() =>
-      _AddingExpensesState(this.expenses);
+  State<AddingExpenses> createState() => _AddingExpensesState(this.expenses);
 }
 
 class _AddingExpensesState extends State<AddingExpenses> {
@@ -41,13 +40,13 @@ class _AddingExpensesState extends State<AddingExpenses> {
                 return const ToastCard(
                     color: Colors.red,
                     title: Text(
-                      'Pleas fill out all fields',
+                      'لطفا تمام گزینه ها را پر کنید',
                       style: TextStyle(color: Colors.white),
                     ));
               },
               position: DelightSnackbarPosition.top,
               autoDismiss: true,
-              snackbarDuration: Durations.extralong4)
+              )
           .show(
         context,
       );
@@ -64,16 +63,15 @@ class _AddingExpensesState extends State<AddingExpenses> {
     if (result != 0) {
       ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
         backgroundColor: Colors.grey,
-        content: Text('Data saved successfully',
-            style: TextStyle(color: Colors.black)),
+        content: Text('اطلاعات ثبت شد', style: TextStyle(color: Colors.black)),
       ));
       reasonToSpendController.clear();
       amountSpentController.clear();
     } else {
       ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
         backgroundColor: Colors.red,
-        content:
-            Text('Failed to save data', style: TextStyle(color: Colors.white)),
+        content: Text('متاسفانه اطلاعات ثبت نشد ',
+            style: TextStyle(color: Colors.white)),
       ));
       return;
     }
@@ -92,7 +90,7 @@ class _AddingExpensesState extends State<AddingExpenses> {
       appBar: AppBar(
         foregroundColor: Colors.white,
         backgroundColor: Colors.teal[300],
-        title: const Text('Adding Expenses'),
+        title: const Text('ثبت خرجی'),
       ),
       body: Center(
         child: Container(
@@ -139,16 +137,17 @@ class _AddingExpensesState extends State<AddingExpenses> {
                       }
                     },
                     child: Text(
-                      'Choose Date',
+                      'انتخاب تاریخ',
                       style: TextStyle(
-                        color: Colors.orange,
-                        fontSize: 20,
-                      ),
+                          color: Colors.orange,
+                          fontSize: 21,
+                          fontWeight: FontWeight.bold),
                     ),
                   ),
                 ],
               ),
               TextField(
+                style: TextStyle(color: Colors.white,),
                 controller: reasonToSpendController,
                 decoration: InputDecoration(
                     labelStyle: TextStyle(color: Colors.white),
@@ -168,7 +167,7 @@ class _AddingExpensesState extends State<AddingExpenses> {
                       ),
                       borderRadius: BorderRadius.circular(25),
                     ),
-                    label: Text('Reason to Spend')),
+                    label: Text('دلیل خرج')),
                 keyboardType: TextInputType.text,
                 onChanged: (value) {
                   setState(() {
@@ -181,6 +180,7 @@ class _AddingExpensesState extends State<AddingExpenses> {
               ),
               // Price Input Field
               TextField(
+                style: TextStyle(color: Colors.white,),
                 controller: amountSpentController,
                 decoration: InputDecoration(
                     labelStyle: const TextStyle(color: Colors.white),
@@ -200,7 +200,7 @@ class _AddingExpensesState extends State<AddingExpenses> {
                       ),
                       borderRadius: BorderRadius.circular(25),
                     ),
-                    label: Text('Spent Amount')),
+                    label: Text('مقدار خرج')),
                 keyboardType: TextInputType.number,
                 onChanged: (value) {
                   setState(() {
@@ -217,9 +217,15 @@ class _AddingExpensesState extends State<AddingExpenses> {
             foregroundColor: Colors.black,
           ),
           onPressed: () {
-              saveExpenses();
+            saveExpenses();
           },
-          child: const Text('Save'),
+          child: const Text(
+            'ثبت',
+            style: TextStyle(
+              fontWeight: FontWeight.bold,
+              fontSize: 21,
+            ),
+          ),
         )
       ],
     );

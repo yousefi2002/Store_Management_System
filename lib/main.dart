@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:store_ms/main_page.dart';
+import 'package:store_ms/loan_borrow/loan_borrow_page.dart';
 import 'package:store_ms/splash_screen.dart';
 
 main() {
@@ -39,9 +39,9 @@ class _MyAppState extends State<MyApp> {
   @override
   Widget build(BuildContext context) {
     return  MaterialApp(
+      debugShowCheckedModeBanner: false,
       theme:  isDarkMode ? ThemeData.dark() : ThemeData.light(),
-      home: const SplashScreen(),
-
+      home: const  SplashScreen(),
     );
   }
 }

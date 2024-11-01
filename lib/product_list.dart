@@ -24,12 +24,12 @@ class _ProductListState extends State<ProductList> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Product'),
+        title: Text('اجناس'),
         backgroundColor: Colors.teal[300],
         foregroundColor: Colors.white,
       ),
       body: addedProduct.isEmpty?
-      Center(child: Text('No product added', style: TextStyle(fontSize: 35),),):
+      Center(child: Text('هیچ جنسی ثبت نشده است', style: TextStyle(fontSize: 35),),):
       ListView.builder(
           itemCount: addedProduct.length,
           itemBuilder: (context, index){
@@ -37,6 +37,8 @@ class _ProductListState extends State<ProductList> {
               padding: const EdgeInsets.only(top: 10, right: 10, left: 10),
               child: ListTile(
                 tileColor: Colors.teal[300],
+                iconColor: Colors.white,
+                textColor: Colors.white,
                 title: Text(addedProduct[index].productName),
                 trailing: IconButton(
                   onPressed: (){
@@ -75,7 +77,8 @@ class _ProductListState extends State<ProductList> {
       ScaffoldMessenger.of(context).showSnackBar(SnackBar(
           backgroundColor: Colors.grey[400],
           content: Text(
-            'Product got deleted',
+            'جنس مورد نظر حذف شد',
+            textAlign: TextAlign.center,
             style: TextStyle(color: Colors.black),
           )));
       updateProductList();

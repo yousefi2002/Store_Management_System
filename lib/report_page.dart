@@ -23,16 +23,16 @@ class _ReportPageState extends State<ReportPage> {
           backgroundColor: Colors.white,
           appBar: AppBar(
             bottom:  PreferredSize(
-              preferredSize: Size.fromHeight(40),
+              preferredSize: Size.fromHeight(45),
               child: Expanded(
                 child: TabBar(
                   tabs: [
                     Tab(
-                      text: 'Sales Report',
+                      text: 'گزارش فروش',
                       icon: Icon(Icons.report_outlined),
                     ),
                     Tab(
-                      text: 'Expenses Report',
+                      text: 'گزارش خرجی',
                       icon: Icon(Icons.monetization_on_outlined),
                     ),
                   ],
@@ -45,7 +45,7 @@ class _ReportPageState extends State<ReportPage> {
             ),
             backgroundColor: Colors.teal[300],
             foregroundColor: Colors.white,
-            title: const Text('Report Page'),
+            title: const Text('گزارشات'),
             elevation: 0,
           ),
           body: TabBarView(
@@ -57,13 +57,4 @@ class _ReportPageState extends State<ReportPage> {
     );
   }
 }
-
-// Future<List<Map<String, dynamic>>> getReports(DateTime startDate, DateTime endDate, String product, String user) async {
-//   var db;
-//   return await db.rawQuery(
-//     'SELECT * FROM Transactions JOIN Products ON Transactions.productId = Products.productId '
-//         'JOIN Users ON Transactions.userId = Users.userId WHERE transactionDate BETWEEN ? AND ? '
-//         'AND Products.productName = ? AND Users.userName = ?',
-//     [startDate.toIso8601String(), endDate.toIso8601String(), product, user],
-//   );
 
